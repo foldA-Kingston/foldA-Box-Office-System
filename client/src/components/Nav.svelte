@@ -4,13 +4,15 @@
 
 <style>
 	nav {
-		border-bottom: 1px solid rgba(255,62,0,0.1);
-		font-weight: 300;
+		border-bottom: 2px solid rgba(0, 0, 0, 0.486); /*blue: 64, 69, 237 orange :249, 164, 80*/
+		color: rgb(64, 69, 237);
+		font: "Poppins";
+		font-weight: 400;
 		padding: 0 1em;
 	}
 
 	ul {
-		margin: 0;
+		margin: 1;
 		padding: 0;
 	}
 
@@ -32,11 +34,11 @@
 	}
 
 	.selected::after {
-		position: absolute;
+		position: absolute; 
 		content: '';
 		width: calc(100% - 1em);
 		height: 2px;
-		background-color: rgb(255,62,0);
+		background-color: rgb(249, 164, 80);
 		display: block;
 		bottom: -1px;
 	}
@@ -50,6 +52,7 @@
 
 <nav>
 	<ul>
+		<li><img src="https://www.folda.ca/wp-content/themes/folda/assets/img/logo_footer.svg" alt="Italian Trulli"></li>
 		<li><a class:selected='{segment === "Events"}' href='Events'>Events</a></li>
 		<li><a class:selected='{segment === "DayPasses"}' href='DayPasses'>DayPasses</a></li>
 		<li><a class:selected='{segment === "Cart"}' href='Cart'>Cart</a></li>
