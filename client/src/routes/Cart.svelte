@@ -1,5 +1,13 @@
 <svelte:head>
-	<title>Cart</title>
+  <title>Cart</title>
 </svelte:head>
 
-<h1>Cart</h1>
+<div class="headingWrapper">
+  <h1>Checkout</h1>
+  <button>Add More</button>
+</div>
+
+<div class="twoColumns">
+  <div>left</div>
+  <div>right</div>
+</div>
