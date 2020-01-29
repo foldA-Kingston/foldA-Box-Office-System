@@ -33,6 +33,7 @@
 	.password{
 		background: transparent;
 		color: #4045ed;
+		font-style: italic;
 	}
 	.saveandlogout{
 		padding: 1rem;
