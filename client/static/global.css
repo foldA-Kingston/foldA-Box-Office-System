@@ -52,6 +52,12 @@ button,
   border: none;
   border-radius: 5px;
   padding: 0.3rem 0.5rem;
+  cursor: pointer;
+}
+
+button:hover,
+.button:hover {
+  opacity: 0.8;
 }
 
 @media (min-width: 400px) {
