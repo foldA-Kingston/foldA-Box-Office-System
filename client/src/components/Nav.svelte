@@ -58,7 +58,7 @@
         alt="Italian Trulli" />
     </li>
     <li>
-      <a class:selected={segment === 'Events'} href="Events">Events</a>
+      <a class:selected={segment === 'index'} href="">Events</a>
     </li>
     <li>
       <a class:selected={segment === 'DayPasses'} href="DayPasses">DayPasses</a>
