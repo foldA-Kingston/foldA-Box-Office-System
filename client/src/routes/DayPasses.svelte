@@ -1,3 +1,7 @@
+<script>
+	import Panel from "../components/Panel.svelte";
+</script>
+
 <svelte:head>
 	<title>Day Pass</title>
 </svelte:head>
