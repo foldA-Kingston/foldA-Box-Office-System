@@ -46,7 +46,8 @@ code {
 }
 
 button,
-.button {
+.button,
+input[type="button"] {
   color: white;
   background-color: var(--orange);
   border: none;
