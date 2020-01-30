@@ -1,13 +1,13 @@
 <script>
-	import Panel from "../components/Panel.svelte";
-	let cart = [
+    import Panel from "../components/Panel.svelte";
+    let cart = [
     {
-      name: "Event Name",
+      name: "Movie 1",
       artist: "Ann Doe",
       time: "9:00 AM"
     },
     {
-      name: "Event name",
+      name: "Movie 2",
       artist: "John Lennon",
       time: "10:00 AM"
     }
@@ -24,12 +24,13 @@
     margin: 0;
   }
 
-  .headingWrapper > button {
-    margin-left: 1rem;
-  }
-
   .twoColumns {
     display: flex;
+  }
+
+  .checkBox {
+	  margin-left: 1rem;
+	  padding-right: 1rem;
   }
 
   .dayEvent {
@@ -62,7 +63,7 @@
   .dayEventHeading time {
     margin: 0;
     padding: 0;
-    margin-left: 1rem;
+    margin-left: 2rem;
   }
 
   .artistName {
@@ -74,44 +75,53 @@
     justify-content: flex-end;
     flex-grow: 1;
   }
+
+  table, td {
+	  border: solid black 0.5mm;
+	  border-collapse: collapse;
+  }
 </style>
 
 <svelte:head>
-	<title>Day Pass</title>
+  <title>Cart</title>
 </svelte:head>
-
 <div class="headingWrapper">
   <h1>Day Passes</h1>
 </div>
 
 <div class="twoColumns">
-	<panel title="Select">
-		{#each cart as item}
-		<div class="dayEvent">
-			<div class="imgPlaceholder"></div>
-			<div>
-				<div class="dayEventHeading">
-					<h4>{item.name}</h4>
-					<time datetime={item.time}>{item.time}</time>
-				</div>
-				<div class="artistName"></div>
-			</div>
-			<div class="removeButtonWrapper">
-				<button>Remove</button>
-			</div>
-		</div>	
-		{/each}
-	</panel>
-	<pane; title="Schedule">
-		<table>
-			<tr>
-				<td>Time</td>
-				<td>Event</td>
-			</tr>
-			<tr>
-				<td>9:00 AM</td>
-				<td>Ann Doe</td>
-			</tr>
-    	</table>
-	</pane>
+  <Panel title="Select">
+    {#each cart as item}
+      <div class="dayEvent">
+	  	<div class="checkBox">
+		  <form>
+			<input type="checkbox" name="Event1" value="Event Name">
+		  </form>
+	    </div>
+        <div class="imgPlaceholder" />
+        <div>
+          <div class="dayEventHeading">
+            <h4>{item.name}</h4>
+            <time>{item.time}</time>
+          </div>
+          <div class="artistName">{item.artist}</div>
+        </div>
+        <div class="removeButtonWrapper">
+          <button>Remove</button>
+        </div>
+      </div>
+    {/each}
+  </Panel>
+  <Panel title="Schedule">
+        <table>
+            <tr>
+                <td>Time</td>
+                <td>Event</td>
+            </tr>
+            <tr>
+                <td>9:00 AM</td>
+                <td>Ann Doe</td>
+            </tr>
+        </table>
+  </Panel>
 </div>
