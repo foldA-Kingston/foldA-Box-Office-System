@@ -69,5 +69,8 @@
     <li>
       <a class:selected={segment === 'Account'} href="Account">Account</a>
     </li>
+    <li>
+      <a class:selected={segment === 'Questionnare'} href="Questionnare">Questionnare</a>
+    </li>
   </ul>
 </nav>
