@@ -2,8 +2,11 @@
 	let firstname = 'barry';
 	let lastname = 'liu';
 	let email = '15ml81@queensu.ca';
+	function handleSave(){
+		alert('change saved')
+	}
 </script>
-
+	
 <style>
 	.panel{
 		width: 40%;
@@ -72,11 +75,12 @@
 		</button>
 	</div>
 	<div class ="saveandlogout">
-		<button class="savechange">
+		<button class="savechange" on:click={handleSave}>
 			<h3>Save Changes</h3>
 		</button>
-		<button class="logout">
+		<button class="logout" onclick="location='Signin'">
 			<h3>Logout</h3>
 		</button>
 	</div>
 </div>
+
