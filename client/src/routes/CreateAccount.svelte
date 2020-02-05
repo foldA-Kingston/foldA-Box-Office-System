@@ -1,12 +1,14 @@
 <script>
-	let firstname = 'barry';
-	let lastname = 'liu';
-	let email = '15ml81@queensu.ca';
-	function handleSave(){
-		alert('change saved')
+	let firstname = '';
+	let lastname = '';
+	let email = '';
+	let password = '';
+	let confirmpassword ='';
+	function handleCreate(){
+		alert('Account saved')
 	}
 </script>
-	
+
 <style>
 	.panel{
 		width: 40%;
@@ -33,16 +35,16 @@
 	.passwordsetting{
 		padding: 1rem;
 	}
-	.password{
+	.confirmpassword{
+		padding: 1rem;
+	}
+	.createandsignin{
+		padding: 1rem;
+	}
+	.signin{
 		background: transparent;
 		color: #4045ed;
 		font-style: italic;
-	}
-	.saveandlogout{
-		padding: 1rem;
-	}
-	.savechange{
-		margin-right: 2rem;
 	}
 
 </style>
@@ -70,16 +72,19 @@
 		<input value={email}>
 	</div>
 	<div class ="passwordsetting">
-		<button class="password">
-			<h3>Change Password</h3>
-		</button>
+		<h3>Password</h3>
+		<input value={password}>
 	</div>
-	<div class ="saveandlogout">
-		<button class="savechange" on:click={handleSave}>
-			<h3>Save Changes</h3>
+	<div class ="confirmpassword">
+		<h3>Confirm Password</h3>
+		<input value={confirmpassword}>
+	</div>
+	<div class ="createandsignin">
+		<button class="create" on:click={handleCreate}>
+			<h3>Create Account</h3>
 		</button>
-		<button class="logout" onclick="location='Signin'">
-			<h3>Logout</h3>
+		<button class="signin" onclick="location='Signin'">
+			<h3>Sign in</h3>
 		</button>
 	</div>
 </div>
