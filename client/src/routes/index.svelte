@@ -2,12 +2,14 @@
 	<title>Events</title>
 </svelte:head>
 <script>
- 	import Panel from "../components/Panel.svelte";
+	 import Panel from "../components/Panel.svelte";
+	 
 	let events = [
 		{name: 'HowlRound Digital + Performance Convening', date: 'April 1', src: 'event1.png'},
 		{name: 'Choir!Choir!Choir!', date: 'June 2', src: 'event2.png'},
 		{name: 'event3', date: 'June 14', src: 'great-success.png'}
 		];
+		
 </script>
 <style>
     .events {
@@ -38,6 +40,7 @@
 		<Panel title={event.name}>
 		<img alt='Event Photo' src={event.src} width="200" height="200">
 		<p>{event.name} <br> Date: {event.date}</p>
+		<a href="Event">{event.name}</a>
 		<button>Buy Tickets</button>
 		</Panel>
 		
