@@ -4,11 +4,12 @@
 from api.utils.database import db
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
-from api.models.model_feedbackAnswer import FeedbackAnswerSchema # this might be wrong
+from api.models.model_feedbackAnswer import FeedbackAnswerSchema
+from api.models.model_ticket import TicketSchema # this might be wrong
 
 class User (db.Model):
     __tablename__ = 'user'
-    #Many tickets have one user
+    #One user has many tickets
     #One User provides many Feed Back answers 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     isAdmin = db.Column(db.Boolean) #is this right?
@@ -17,16 +18,18 @@ class User (db.Model):
     name = db.Column(db.String)
     birthDate = db.Column(db.Date)
     association =db.Column(db.String)
-    feedbackAnswer = db.relationship('feedbackAnswer', backref='User')
+    feedbackAnswers = db.relationship('feedbackAnswer', backref='User')
+    tickets = db.relationship('feedbackAnswer', backref='User')
 
-    def __init__(self, isAdmin, emailAdress, createDate, name, birthDate, association, feedbackAnswer=[]):
+    def __init__(self, isAdmin, emailAdress, createDate, name, birthDate, association, feedbackAnswers=[], tickets=[]):
         self.isAdmin = isAdmin
         self.emailAdress = emailAdress
         self.createDate = createDate
         self.name = name
         self.birthDate = birthDate
         self.association = association
-        self.feedbackAnswer = feedbackAnswer
+        self.feedbackAnswers = feedbackAnswers
+        self.tickets = tickets
 
     def create(self):
         db.session.add(self)
@@ -46,4 +49,5 @@ class UserSchema(ModelSchema):
     name = fields.String(required=True)
     birthDate = fields.Date(required=True)
     association = fields.String(required=True)
-    feedbackAnswer = fields.Nested(FeedbackAnswerSchema, many=True)
+    feedbackAnswers = fields.Nested(FeedbackAnswerSchema, many=True)
+    tickets = fields.Nested(TicketSchema, many=True)
