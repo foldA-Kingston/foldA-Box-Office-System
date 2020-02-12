@@ -16,10 +16,10 @@ class Purchasable(db.Model):
     type = db.Column(db.String(20),nullable=False)
     numTickets = db.Column(db.Integer)
     isSoldOut = db.Column(db.Boolean,nullable=False)
-    events = db.relationship('Event', backref='Purchasable')
-    tickets = db.relationship('Ticket', backref='Purchasable')
-    ticketClass = db.relationship('TicketClass', backref='Purchasable')
-    feedbackQuestions = db.relationship('FeedbackQuestion',backref='Purchasable')
+    event.id = db.Column(db.Integer, db.ForeignKey('event.id'))
+    ticket.id = db.Column(db.Integer, db.ForeignKey('ticket.id')
+    ticketClass.id = db.Column(db.Integer, db.ForeignKey('ticketClass.id'))
+    feedbackQuestion.id = db.Column(db.Integer, db.ForeignKey('feedbackQuestion.id'))
 
     def __init__(self, id, type, numTickets, isSoldOut, events=[], tickets=[], ticketClass=[], feedbackQuestions=[]):
         self.id = id
