@@ -12,20 +12,20 @@ class Purchasable(db.Model):
     type = db.Column(db.String(20),nullable=False)
     numTickets = db.Column(db.Integer)
     isSoldOut = db.Column(db.Boolean,nullable=False)
-    event.id = db.Column(db.Integer, db.ForeignKey('event.id'))
-    ticket.id = db.Column(db.Integer, db.ForeignKey('ticket.id'))
-    ticketClass.id = db.Column(db.Integer, db.ForeignKey('ticketClass.id'))
-    feedbackQuestion.id = db.Column(db.Integer, db.ForeignKey('feedbackQuestion.id'))
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'))
+    ticket_id = db.Column(db.Integer, db.ForeignKey('ticket.id'))
+    ticketClass_id = db.Column(db.Integer, db.ForeignKey('ticketClass.id'))
+    feedbackQuestion_id = db.Column(db.Integer, db.ForeignKey('feedbackQuestion.id'))
 
-    def __init__(self, id, type, numTickets, isSoldOut, event.id=None, ticket.id=None, ticketClass.id=None, feedbackQuestion.id=None):
+    def __init__(self, id, type, numTickets, isSoldOut, event_id=None, ticket_id=None, ticketClass_id=None, feedbackQuestion_id=None):
         self.id = id
         self.type = type
         self.numTickets = numTickets
         self.isSoldOut = isSoldOut
-        self.event.id = event.id
-        self.ticket.id = ticket.id
-        self.ticketClass.id = ticketClass.id
-        self.feedbackQuestion.id = feedbackQuestion.id
+        self.event_id = event_id
+        self.ticket_id = ticket_id
+        self.ticketClass_id = ticketClass_id
+        self.feedbackQuestion_id = feedbackQuestion_id
     def create(self):
         db.session.add(self)
         db.session.commit()
@@ -41,7 +41,7 @@ class PurchasableSchema(ModelSchema):
     type = fields.String(required=True)
     numTickets = fields.Integer(required=True)
     isSoldOut = fields.Boolean(required=True)
-    event.id = fields.Integer()
-    ticket.id = fields.Integer()
-    ticketClass.id = fields.Integer()
-    feedbackQuestion.id = fields.Integer()
+    event_id = fields.Integer()
+    ticket_id = fields.Integer()
+    ticketClass_id = fields.Integer()
+    feedbackQuestion_id = fields.Integer()
