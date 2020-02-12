@@ -15,6 +15,21 @@
 
 <script>
   export let event;
+  var generalOption = 0; //option id 1
+  var studentOption = 0;//option id 2
+  function handleClick(id, opID) {
+    if (opID == 1) {
+      generalOption =id;
+    }
+    else if (opID == 2) {
+      studentOption =id;
+    }
+  }
+  /* cool stuff
+  function changeEvent () {
+    {event.date = "APRIL"};
+  }
+  */
 </script>
 
 <style>
@@ -61,15 +76,53 @@
     border-radius: 10px;
     padding: 10px;
   }
-  .scrollable{
-   overflow: auto;
-   width: 70px; /* adjust this width depending to amount of text to display */
-   height: 50px; /* adjust height depending on number of options to display */
-   border: 1px silver solid;
+  .scrolldownbutton{
+    color: black;
+    text-align: left;
+    border-color:  rgb(70, 70, 70) 1mm;
+    border-radius: 10px;
+    background-color: white;
+    padding: 16px;
+
  }
- .scrollable select{
-   border: none;
- }
+ .dropdown {
+  position: relative;
+  display: inline-block;
+  
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+.dropdown-content button {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+.options {
+  background-color: #f1f1f1;
+  padding: 12px 16px;
+  min-width: 160px;
+  z-index: 1;
+  text-align: left
+}
+.description {
+  font-size: 10px;
+
+}
+
+
+.dropdown:hover .dropdown-content {display: block;}
+
+.dropdown:hover .scrolldownbutton {background-color: #e6e6e6;}
+
+.dropdown-content button:hover {background-color: rgb(184, 184, 184);}
+
 
 </style>
 
@@ -89,6 +142,8 @@
     <br /> 
     Artist: {event.artist}
   </p>
+  <div class= description>{@html event.description}</div>
+ 
 </div>
   
     <table style="width:50%">
@@ -100,34 +155,35 @@
     <tr>
         <td>General</td>
         <td>$40</td>
-        <div class="scrollable">
-          <select size="6" multiple="multiple">
-              <option value="1" selected>1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-          </select>
-       </div>
-			
+        
+        <div class="dropdown">
+          <button class = "scrolldownbutton">{generalOption} <img style = "float: right;" alt='scroll' src="scroll.png"></button>
+          <div class="dropdown-content">
+            <button class=options on:click={() => handleClick("1", 1)}>1</button>
+            <button class=options on:click={() => handleClick("2", 1)}>2</button>
+            <button class=options on:click={() => handleClick("3", 1)}>3</button>
+            <button class=options on:click={() => handleClick("4", 1)}>4</button>
+            <button class=options on:click={() => handleClick("5", 1)}>5</button>
+          </div>
+        </div>
+            
     </tr>
 		<tr> 
 		 	<td>Student</td>
       <td>$30</td>
-      <div class="scrollable">
-          <select size="6" multiple="multiple">
-              <option value="1" selected>1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-          </select>
-       </div>
+       <div class="dropdown">
+           <button class = "scrolldownbutton">{studentOption} <img style = "float: right;" alt='scroll' src="scroll.png"></button>
+          <div class="dropdown-content">
+            <button class=options on:click={() => handleClick("1", 2)}>1</button>
+            <button class=options on:click={() => handleClick("2", 2)}>2</button>
+            <button class=options on:click={() => handleClick("3", 2)}>3</button>
+            <button class=options on:click={() => handleClick("4", 2)}>4</button>
+            <button class=options on:click={() => handleClick("5", 2)}>5</button>
+          </div>
+        </div>
 		</tr>
     <tr>
-      <button style= "padding: 3px;" onclick="window.location.href = '/Cart'">Add To Cart</button>
+      <button onclick="window.location.href = '/Cart'">Add To Cart</button>
     </tr>
     </table>
 </div>

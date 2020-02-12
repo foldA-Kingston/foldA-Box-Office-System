@@ -20,7 +20,7 @@
 		display: block;
     }
 	.heading {
-		font-family: "Verdana", sans-serif;
+		font-family: "Poppins";
 		font-size: 40px;
 		color: rgba(64, 69, 237);
 		font-weight: bolder;

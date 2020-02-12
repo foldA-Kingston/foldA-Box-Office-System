@@ -6,7 +6,8 @@ const contents = JSON.stringify(events.map(event => {
 		slug: event.slug,
 		date: event.date,
 		src: event.src,
-		artist: event.artist
+		artist: event.artist,
+		description: event.description
 	};
 }));
 
