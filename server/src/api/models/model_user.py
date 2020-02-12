@@ -13,7 +13,7 @@ class User (db.Model):
     #One User provides many Feed Back answers 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     isAdmin = db.Column(db.Boolean) #is this right?
-    emailAdress = db.Column(db.String)
+    emailAddress = db.Column(db.String)
     createDate = db.Column(db.Date)
     name = db.Column(db.String)
     birthDate = db.Column(db.Date)
@@ -21,9 +21,9 @@ class User (db.Model):
     feedbackAnswers = db.relationship('feedbackAnswer', backref='User')
     tickets = db.relationship('feedbackAnswer', backref='User')
 
-    def __init__(self, isAdmin, emailAdress, createDate, name, birthDate, association, feedbackAnswers=[], tickets=[]):
+    def __init__(self, isAdmin, emailAddress, createDate, name, birthDate, association, feedbackAnswers=[], tickets=[]):
         self.isAdmin = isAdmin
-        self.emailAdress = emailAdress
+        self.emailAddress = emailAddress
         self.createDate = createDate
         self.name = name
         self.birthDate = birthDate
