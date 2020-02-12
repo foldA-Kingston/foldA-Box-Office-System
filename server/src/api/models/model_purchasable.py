@@ -13,7 +13,7 @@ class Purchasable(db.Model):
     numTickets = db.Column(db.Integer)
     isSoldOut = db.Column(db.Boolean,nullable=False)
     event.id = db.Column(db.Integer, db.ForeignKey('event.id'))
-    ticket.id = db.Column(db.Integer, db.ForeignKey('ticket.id')
+    ticket.id = db.Column(db.Integer, db.ForeignKey('ticket.id'))
     ticketClass.id = db.Column(db.Integer, db.ForeignKey('ticketClass.id'))
     feedbackQuestion.id = db.Column(db.Integer, db.ForeignKey('feedbackQuestion.id'))
 
