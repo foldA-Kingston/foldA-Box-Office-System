@@ -20,6 +20,7 @@
 
   .panel .content {
     padding: 1rem;
+    
   }
 </style>
 
