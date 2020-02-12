@@ -4,10 +4,6 @@
 from api.utils.database import db
 from marshmallow_sqlalchemy import ModelSchema
 from marshmallow import fields
-from api.models.model_event import EventSchema
-from api.models.model_ticket import TicketSchema
-from api.models.model_ticketClass import TicketClassSchema
-from api.models.model_feedbackQuestion import FeedbackQuestionSchema
 
 class Purchasable(db.Model):
     __tablename__ = 'purchasable'
@@ -21,15 +17,15 @@ class Purchasable(db.Model):
     ticketClass.id = db.Column(db.Integer, db.ForeignKey('ticketClass.id'))
     feedbackQuestion.id = db.Column(db.Integer, db.ForeignKey('feedbackQuestion.id'))
 
-    def __init__(self, id, type, numTickets, isSoldOut, events=[], tickets=[], ticketClass=[], feedbackQuestions=[]):
+    def __init__(self, id, type, numTickets, isSoldOut, event.id=None, ticket.id=None, ticketClass.id=None, feedbackQuestion.id=None):
         self.id = id
         self.type = type
         self.numTickets = numTickets
         self.isSoldOut = isSoldOut
-        self.events = events
-        self.tickets = tickets
-        self.ticketClass = ticketClass
-        self.feedbackQuestions = feedbackQuestions
+        self.event.id = event.id
+        self.ticket.id = ticket.id
+        self.ticketClass.id = ticketClass.id
+        self.feedbackQuestion.id = feedbackQuestion.id
     def create(self):
         db.session.add(self)
         db.session.commit()
@@ -45,7 +41,7 @@ class PurchasableSchema(ModelSchema):
     type = fields.String(required=True)
     numTickets = fields.Integer(required=True)
     isSoldOut = fields.Boolean(required=True)
-    events = fields.Nested(EventSchema, many=True)
-    tickets = fields.Nested(TicketSchema, many=True)
-    ticketClass = fields.Nested(TicketClassSchema, many=True)
-    feedbackQuestions = fields.Nested(FeedbackQuestionSchema, many=True)
+    self.event.id = fields.Integer()
+    self.ticket.id = fields.Integer()
+    self.ticketClass.id = fields.Integer()
+    self.feedbackQuestion.id = fields.Integer()
