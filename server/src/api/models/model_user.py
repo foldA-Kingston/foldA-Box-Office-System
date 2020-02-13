@@ -12,7 +12,7 @@ class User (db.Model):
     #One user has many tickets
     #One User provides many Feed Back answers 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    isAdmin = db.Column(db.Boolean) #is this right?
+    isAdmin = db.Column(db.Boolean) 
     emailAddress = db.Column(db.String)
     createDate = db.Column(db.Date)
     name = db.Column(db.String)
@@ -43,7 +43,7 @@ class UserSchema(ModelSchema):
         sqla_session = db.session
 
     id = fields.Number(dump_only=True)
-    isAdmin = fields.Boolean(required=True) #is this right?
+    isAdmin = fields.Boolean(required=True) 
     emailAdress = fields.String(required=True)
     createDate = fields.Date(required=True)
     name = fields.String(required=True)
