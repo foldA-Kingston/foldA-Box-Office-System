@@ -12,5 +12,5 @@
         {events[0].date ="APRIL 26"}
     }
 </script>
-<button on:click={changeDate}>Click here to chaneg the date</button>
+<button on:click={changeDate}>Click here to change the date</button>
 
