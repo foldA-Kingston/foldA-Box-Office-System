@@ -10,10 +10,13 @@
     } else {
       this.error(res.status, data.message);
     }
+
+	
   }
 </script>
 
 <script>
+  //import cartItems from '../_cartItems.js'; //ADDED
   export let event;
   var generalOption = 0; //option id 1
   var studentOption = 0;//option id 2
@@ -24,6 +27,10 @@
     else if (opID == 2) {
       studentOption =id;
     }
+  }
+
+  function addToCart (event) {
+    cartItems.push({name: "Hello", date: "date", artist: "bob", num: 5});
   }
   /* cool stuff
   function changeEvent () {
@@ -113,6 +120,7 @@
 }
 .description {
   font-size: 10px;
+  padding: 10px;
 
 }
 
@@ -136,7 +144,7 @@
 <div class="twoColumns">
 <div class ="panel"> 
   <img class = "eventimg" alt='Event Photo' src={event.src} width="500" height="400">
-  <br /> 
+
   <p>
     Date: {event.date}
     <br /> 
@@ -155,7 +163,7 @@
     <tr>
         <td>General</td>
         <td>$40</td>
-        
+        <td>
         <div class="dropdown">
           <button class = "scrolldownbutton">{generalOption} <img style = "float: right;" alt='scroll' src="scroll.png"></button>
           <div class="dropdown-content">
@@ -166,11 +174,13 @@
             <button class=options on:click={() => handleClick("5", 1)}>5</button>
           </div>
         </div>
+        </td>
             
     </tr>
 		<tr> 
 		 	<td>Student</td>
       <td>$30</td>
+      <td>
        <div class="dropdown">
            <button class = "scrolldownbutton">{studentOption} <img style = "float: right;" alt='scroll' src="scroll.png"></button>
           <div class="dropdown-content">
@@ -181,9 +191,10 @@
             <button class=options on:click={() => handleClick("5", 2)}>5</button>
           </div>
         </div>
+        </td>
 		</tr>
     <tr>
-      <button onclick="window.location.href = '/Cart'">Add To Cart</button>
+      <td><button onclick="window.location.href = '/Cart'">Add To Cart</button></td>
     </tr>
     </table>
 </div>

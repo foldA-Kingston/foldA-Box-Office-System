@@ -3,7 +3,7 @@ const events = [
     {name: 'HowlRound Digital + Performance Convening', 
     slug: 'HowlRound-Digital',
     date: 'April 1', src: 'event1.png',
-    artist: 'Bob',
+    artist: 'Zed',
     description: `
     <p>Equal parts singing, comedy, and community-building, the night unfolds like a dream:</p>
     <p>You get a lyric sheet at the door, DaBu teaches you the vocal arrangement, and a video is recorded. Everyone has a ball and goes home feeling great! Daveed Goldman and Nobu Adilman (AKA “DaBu”) started Choir! Choir! Choir! as a weekly drop-in singing event in February 2011.</p>

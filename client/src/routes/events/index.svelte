@@ -4,10 +4,29 @@
 			return { events };
 		});
 	}
+	
 </script>
 
 <script>
-	export let events;
+	export let events = [];
+	
+	function sortByArtist () {
+		//let temp =events[0];
+		//events[0] = events[1];
+		//events[1] = temp;	
+		
+		for (let i = 0; i<events.length; i++) {
+			for (let j = i+1; j<events.length; j++) {
+				if (((events[i].artist).compareTo(events[j].artist))>0) {
+					let temp =events[i];
+					events[i] = events[j];
+					events[j] = temp;
+				}
+			}
+			
+		}
+		
+	}
 </script>
 
 
@@ -24,6 +43,7 @@
 		font-size: 40px;
 		color: rgba(64, 69, 237);
 		font-weight: bolder;
+		display: inline;
 	}
 	p {
 		position: relative;
@@ -60,7 +80,9 @@
   }
 
 </style>
-<h1 class="heading">EVENTS</h1>
+<h1 class="heading">EVENTS
+<button style ="position: absolute; right: 50px; top: 50px;" on:click={() =>sortByArtist()}>Sort</button>
+</h1>
 <div class = "events">
 	{#each events as event}
 	<div class="panel">

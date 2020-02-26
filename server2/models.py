@@ -12,7 +12,7 @@ class event(db.Model):
     endTime = db.Column(db.Date)
     venue = db.Column(db.String)
     capacity = db.Column(db.Integer)
-    isFull = db.Column(db.Boolean)  # What is used for T/F?
+    isFull = db.Column(db.Boolean) 
     purchasable = db.relationship('Purchasable', backref='Event')
     tickets = db.relationship('TicketClass', backref='Event')
 
@@ -45,7 +45,7 @@ class ticket(db.Model):
 
 class user(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    isAdmin = db.Column(db.Boolean)  # is this right?
+    isAdmin = db.Column(db.Boolean)  
     emailAddress = db.Column(db.String)
     createDate = db.Column(db.Date)
     name = db.Column(db.String)

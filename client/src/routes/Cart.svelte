@@ -1,4 +1,6 @@
+
 <script>
+
   import Panel from "../components/Panel.svelte";
 
   let cart = [
