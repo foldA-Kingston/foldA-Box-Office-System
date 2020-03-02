@@ -1,64 +1,22 @@
-# flask-api-starter
+## Installation
+### Clone
 
-[![Build Status](https://travis-ci.org/cdagli/flask-api-starter.svg?branch=master)](https://travis-ci.org/cdagli/flask-api-starter)
+    git clone (repo)
+### Setup
+Make sure Python3 is installed. Check using:
+    
+    python3 -V
 
-This project provides a boilerplate for building a Rest API using flask.
+1. Create & activate virtual environment in QVFT-Brain directory:
 
-Other modules used are listed below; 
-- sqlalchemy
-- marshmallow
-- sqlalchemy marshmallow
-- flask sqlalchemy
-- flask swagger
+        python3 -m venv venv
+        source /venv/bin/activate
 
-![alt text][screenshot]
 
-[screenshot]: https://github.com/cdagli/flask-api-starter/blob/master/swagger.png
-_*swagger documentation visualized with Swagger UI Console [Chrome extension](https://chrome.google.com/webstore/detail/swagger-ui-console/ljlmonadebogfjabhkppkoohjkjclfai)_
+2. Install required libraries:
 
-###To run locally:
+        pip install -r requirements.txt  
 
-```
-git clone https://github.com/cdagli/flask-api-starter
-cd flask-api-starter
-virtualenv venv
-source venv/bin/activate
-cd src
-pip install -r requirements.txt
-python -m run 
-```
+3.  Start the server:
 
-Run tests:
-```
-nose2 -v
-```
-
-###Using Docker
-Build with docker: 
-```
-git clone https://github.com/cdagli/flask-api-starter
-cd flask-api-starter/src
-docker build -t flask-api-starter .
-```
-
-Run in development mode: 
-```
-docker run -dt --name=flask-api-starter -v $PWD:/app -p 5000:5000 -e 'WORK_ENV=DEV' flask-api-starter
-```
-
-Run in production mode:
-```
-docker run -dt --restart=always --name=flask-api-starter -p 5000:5000 -e 'WORK_ENV=PROD' flask-api-starter
-```
-
-Remove the container:
-```
-docker rm -f flask-api-starter
-```
-
-To see logs and connect the container:
-```
-docker logs --follow flask-api-starter
-docker exec -it flask-api-starter bash
-
-```
+        python app.py
