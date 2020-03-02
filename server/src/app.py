@@ -111,18 +111,19 @@ class feedbackQuestion(db.Model):
     text = db.Column(db.String)
     purchasable = db.relationship('purchasable', backref='feedbackQuestion')
 
-# @app.route('/')
-# def hello():
-#     return "Hello World!"
+
+@app.route('/')
+def hello():
+    return "Hello World!"
 
 
-# @app.route("/readings/", methods=['POST'])
-# def readings():
-#     print(request.is_json)
-#     content = request.get_json()
-#     print(content)
-#     return 'JSON posted'
+@app.route("/readings/", methods=['POST'])
+def readings():
+    print(request.is_json)
+    content = request.get_json()
+    print(content)
+    return 'JSON posted'
 
 
-# if __name__ == '__main__':
-#     app.run(host="127.0.0.1", port='8080', debug=True)
+if __name__ == '__main__':
+    app.run(host="127.0.0.1", port='8080', debug=True)
