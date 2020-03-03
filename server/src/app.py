@@ -14,15 +14,20 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 
-class event_ticket(db.Model):
-    __tablename__ = 'event_ticket'
+class Event_Ticket(db.Model):
+    __tablename__ = 'Event_Ticket'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    event = db.relationship('event', backref='event_ticket')
-    ticket = db.relationship('ticket', backref='event_ticket')
+
+    event_id = db.Column(db.Integer, db.ForeignKey('Event.id'))
+    event = db.relationship('Event', backref='Event_Ticket')
+
+    ticket_id = db.Column(db.Integer, db.ForeignKey('Ticket.id'))
+    ticket = db.relationship(
+        'Ticket', backref='Event_Ticket')
 
 
-class event(db.Model):
-    __tablename__ = 'event'
+class Event(db.Model):
+    __tablename__ = 'Event'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     artistName = db.Column(db.String)
     imageUrl = db.Column(db.String)
@@ -34,82 +39,108 @@ class event(db.Model):
     capacity = db.Column(db.Integer)
     isFull = db.Column(db.Boolean)
 
-    purchasable = db.relationship('purchasable', backref='event')
+    purchasable_id = db.Column(db.Integer, db.ForeignKey('Purchasable.id'))
+    purchasable = db.relationship(
+        'Purchasable', backref='Event')
 
 
-class TypeEnum(enum.Enum):
+class PurchasableTypes1(enum.Enum):
     individual = 0
     dayPass = 1
 
 
-class purchasable(db.Model):
-    __tablename__ = 'purchasable'
+class Purchasable(db.Model):
+    __tablename__ = 'Purchasable'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    type = db.Column(db.Enum(TypeEnum))
+    type = db.Column(db.Enum(PurchasableTypes1))
     numTickets = db.Column(db.Integer)
     isSoldOut = db.Column(db.Boolean, nullable=False)
 
-    purchasable_ticketClass = db.relationship(
-        'purchasable_ticketClass', backref='purchasable')
 
-
-class ticket(db.Model):
-    __tablename__ = 'ticket'
+class Ticket(db.Model):
+    __tablename__ = 'Ticket'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     isPurchased = db.Column(db.Boolean)
     createDate = db.Column(db.DateTime, server_default=db.func.now())
     purchaseDate = db.Column(db.DateTime)
 
-    purchasable = db.relationship('purchasable', backref='ticket')
-    ticketClass = db.relationship('ticketClass', backref='ticket')
-    user = db.relationship('user', backref='ticket')
-
-
-class purchasable_ticketClass(db.Model):
-    __tablename__ = 'purchasable_ticketClass'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    purchasable_id = db.Column(db.Integer, db.ForeignKey('Purchasable.id'))
     purchasable = db.relationship(
-        'purchasable', backref='purchasable_ticketClass')
+        'Purchasable', backref='Ticket')
+
+    ticketClass_id = db.Column(db.Integer, db.ForeignKey('TicketClass.id'))
     ticketClass = db.relationship(
-        'ticketClass', backref='purchasable_ticketClass')
+        'TicketClass', backref='Ticket')
+
+    user_id = db.Column(db.Integer, db.ForeignKey('User.id'))
+    user = db.relationship('User', backref='Ticket')
 
 
-class ticketClass(db.Model):
-    __tablename__ = 'ticketClass'
+class Purchasable_TicketClass(db.Model):
+    __tablename__ = 'Purchasable_TicketClass'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+    purchasable_id = db.Column(db.Integer, db.ForeignKey('Purchasable.id'))
+    purchasable = db.relationship(
+        'Purchasable', backref='Purchasable_TicketClass')
+
+    ticketClass_id = db.Column(db.Integer, db.ForeignKey('TicketClass.id'))
+    ticketClass = db.relationship(
+        'TicketClass', backref='Purchasable_TicketClass')
+
+
+class TicketClass(db.Model):
+    __tablename__ = 'TicketClass'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     description = db.Column(db.String)
     price = db.Column(db.Integer)
 
 
-class user(db.Model):
-    __tablename__ = 'user'
+class User(db.Model):
+    __tablename__ = 'User'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    isAdmin = db.Column(db.Boolean)
-    emailAddress = db.Column(db.String)
-    createDate = db.Column(db.DateTime, server_default=db.func.now())
-    name = db.Column(db.String)
+    isAdmin = db.Column(db.Boolean, nullable=False, default=False)
+    emailAddress = db.Column(db.String, nullable=False)
+    createDate = db.Column(
+        db.DateTime, server_default=db.func.now(), nullable=False)
+    name = db.Column(db.String, nullable=False)
     gender = db.Column(db.String)
     birthDate = db.Column(db.Date)
     association = db.Column(db.String)
 
 
-class feedbackAnswer(db.Model):
-    __tablename__ = 'feedbackAnswer'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+class FeedbackAnswer(db.Model):
+    __tablename__ = 'FeedbackAnswer'
+    id = db.Column(db.Integer, primary_key=True,
+                   autoincrement=True, nullable=False)
     response = db.Column(db.String)
+
+    feedbackQuestion_id = db.Column(
+        db.Integer, db.ForeignKey('FeedbackQuestion.id'), nullable=False)
     feedbackQuestion = db.relationship(
-        'feedbackQuestion', backref='feedbackAnswer'
-    )
+        'FeedbackQuestion', backref='FeedbackAnswer')
+
+    user_id = db.Column(
+        db.Integer, db.ForeignKey('User.id'), nullable=False)
     user = db.relationship(
-        'user', backref='feedbackAnswer'
-    )
+        'User', backref='FeedbackAnswer')
 
 
-class feedbackQuestion(db.Model):
-    __tablename__ = 'feedbackQuestion'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    text = db.Column(db.String)
-    purchasable = db.relationship('purchasable', backref='feedbackQuestion')
+class FeedbackQuestion(db.Model):
+    __tablename__ = 'FeedbackQuestion'
+    id = db.Column(db.Integer, primary_key=True,
+                   autoincrement=True, nullable=False)
+    text = db.Column(db.String, nullable=False)
+
+    purchasable_id = db.Column(
+        db.Integer, db.ForeignKey('Purchasable.id'), nullable=False)
+    purchasable = db.relationship(
+        'Purchasable', backref='FeedbackQuestion')
+
+
+def serialize(obj):
+    return {c.key: getattr(obj, c.key)
+            for c in db.inspect(obj).mapper.column_attrs}
 
 
 @app.route('/')
@@ -117,8 +148,47 @@ def hello():
     return "Hello World!"
 
 
-@app.route("/readings/", methods=['POST'])
-def readings():
+@app.route("/users/", methods=['POST'])
+def createUser():
+    # print(request.is_json)
+    # content = request.get_json()
+    # print(content)
+    # return 'JSON posted'
+    if request.form:
+        user = User(name=request.form.get("name"),
+                    emailAddress=request.form.get("emailAddress"))
+        db.session.add(user)
+        db.session.commit()
+        users = db.session.query(User)
+        return [serialize(user) for user in users][-1]
+
+
+@app.route("/users/", methods=['GET'])
+def getUsers():
+    print(request.is_json)
+    content = request.get_json()
+    print(content)
+    return 'JSON posted'
+
+
+@app.route("/users/<id>/", methods=['PUT'])
+def updateUser():
+    print(request.is_json)
+    content = request.get_json()
+    print(content)
+    return 'JSON posted'
+
+
+@app.route("/users/<id>/", methods=['DELETE'])
+def deleteUser():
+    print(request.is_json)
+    content = request.get_json()
+    print(content)
+    return 'JSON posted'
+
+
+@app.route("/auth/", methods=['GET'])
+def getAuthToken():
     print(request.is_json)
     content = request.get_json()
     print(content)
