@@ -7,13 +7,15 @@ from flask_jwt_extended import (
 )
 import enum
 import bcrypt
+import json
 
 app = Flask(__name__)
 
 app.config['DEBUG'] = True
+# TODO: Put this in a env variable
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://rqkxpfbo:Rpk8w646Zf5pIide1L9KP-_p4ElwNFsw@rajje.db.elephantsql.com:5432/rqkxpfbo'
 
-app.config['JWT_SECRET_KEY'] = 'super-secret'  # TODO: Change this!
+app.config['JWT_SECRET_KEY'] = 'super-secret'  # TODO: Change this
 jwt = JWTManager(app)
 
 SQLALCHEMY_TRACK_MODIFICATIONS = True
@@ -162,14 +164,13 @@ class FeedbackQuestion(db.Model):
 
 
 def serialize(obj):
-    return {c.key: getattr(obj, c.key)
-            for c in db.inspect(obj).mapper.column_attrs}
-
-
-# Test route
-@app.route('/')
-def hello():
-    return "Hello World!"
+    result = {c.key: getattr(obj, c.key)
+              for c in db.inspect(obj).mapper.column_attrs}
+    result.pop("password", None)  # remove password if exists
+    for key in result:  # convert enums to strings
+        if isinstance(result[key], enum.Enum):
+            result[key] = str(result[key]).split('.')[-1]
+    return result
 
 
 def getHashedPassword(plain_text_password):
@@ -199,33 +200,135 @@ def createUser():
 
 # Get users
 @app.route("/users/", methods=['GET'])
+@jwt_required
 def getUsers():
-    users = db.session.query(User).all()
-    return jsonify([serialize(user) for user in users])
+    if identity['isAdmin']:
+        users = db.session.query(User).all()
+        return jsonify([serialize(user) for user in users])
+    return "Forbidden", 403
 
 
 # Get one user
 @app.route("/users/<id>/", methods=['GET'])
+@jwt_required
 def getUser(id):
-    user = db.session.query(User).filter(User.id == id).first()
-    return serialize(user)
+    identity = get_jwt_identity()
+    id = int(id)
+    if identity['id'] == id or identity['isAdmin']:
+        user = db.session.query(User).filter(User.id == id).first()
+        return serialize(user)
+    return "Forbidden", 403
 
 
 # Update one user
 @app.route("/users/<id>/", methods=['PUT'])
+@jwt_required
 def updateUser(id):
-    user = db.session.query(User).filter(User.id == id).first()
-    user.name = request.json.get("name")
-    db.session.commit()
-    return serialize(user)
+    identity = get_jwt_identity()
+    id = int(id)
+    if identity['id'] == id or identity['isAdmin']:
+        user = db.session.query(User).filter(User.id == id).first()
+        user.name = request.json.get("name")
+        db.session.commit()
+        return serialize(user)
+    return "Forbidden", 403
 
 
 # Delete one user
 @app.route("/users/<id>/", methods=['DELETE'])
+@jwt_required
 def deleteUser(id):
-    user = db.session.query(User).filter(User.id == id).delete()
-    db.session.commit()
-    return "Deleted user {}".format(id)
+    identity = get_jwt_identity()
+    id = int(id)
+    if identity['id'] == id or identity['isAdmin']:
+        user = db.session.query(User).filter(User.id == id).delete()
+        db.session.commit()
+        return "Deleted user {}".format(id)
+    return "Forbidden", 403
+
+
+# Create new event
+@app.route("/events/", methods=['POST'])
+@jwt_required
+def createEvent():
+    identity = get_jwt_identity()
+    if identity['isAdmin']:
+        event = Event(
+            artistName=request.json.get("artistName"),
+            description=request.json.get("description"),
+            startTime=request.json.get("startTime"),
+            endTime=request.json.get("endTime"),
+            venue=request.json.get("venue"),
+            capacity=request.json.get("capacity")
+        )
+        purchasable = None
+
+        if request.json.get("purchasableId"):  # add to existing purchasable
+            event.purchasable_id = request.json.get("purchasableId")
+
+        else:  # create event AND purchasable
+            purchasable = Purchasable(
+                type=PurchasableTypes2(request.json['type']) if request.json.get(
+                    'type') else PurchasableTypes2.individual,
+                numTickets=request.json.get("capacity")
+            )
+            db.session.add(purchasable)
+            db.session.flush()
+            event.purchasable_id = purchasable.id
+
+        db.session.add(event)
+        db.session.commit()
+        event = db.session.query(Event).filter(Event.id == event.id).first()
+        purchasable = db.session.query(Purchasable).filter(
+            Purchasable.id == purchasable.id).first()
+        return {'event': serialize(event), 'purchasable': serialize(purchasable)}
+    return "Forbidden", 403
+
+
+# Get events
+@app.route("/events/", methods=['GET'])
+def getEvents():
+    events = db.session.query(Event).all()
+    return jsonify([serialize(event) for event in events])
+
+
+# Get one event
+@app.route("/events/<id>/", methods=['GET'])
+def getEvent(id):
+    event = db.session.query(Event).filter(Event.id == id).first()
+    return serialize(event)
+
+
+# Update one event
+@app.route("/events/<id>/", methods=['PUT'])
+@jwt_required
+def updateEvent(id):
+    identity = get_jwt_identity()
+    id = int(id)
+    if identity['isAdmin']:
+        event = db.session.query(Event).filter(Event.id == id).first()
+        event.artistName = request.json.get("artistName"),
+        event.description = request.json.get("description"),
+        event.startTime = request.json.get("startTime"),
+        event.endTime = request.json.get("endTime"),
+        event.venue = request.json.get("venue"),
+        event.capacity = request.json.get("capacity")
+        db.session.commit()
+        return serialize(event)
+    return "Forbidden", 403
+
+
+# Delete one event
+@app.route("/events/<id>/", methods=['DELETE'])
+@jwt_required
+def deleteEvent(id):
+    identity = get_jwt_identity()
+    id = int(id)
+    if identity['isAdmin']:
+        event = db.session.query(Event).filter(Event.id == id).delete()
+        db.session.commit()
+        return "Deleted event {}".format(id)
+    return "Forbidden", 403
 
 
 @app.route('/auth/', methods=['POST'])
@@ -244,12 +347,12 @@ def authenticate():
     user = db.session.query(User).filter(
         User.emailAddress == emailAddress).first()
 
-    if not checkPassword(password, user.password):
-        return jsonify({"msg": "Bad emailAddress or password"}), 401
-
-    # Identity can be any data that is json serializable
-    access_token = create_access_token(identity=emailAddress)
-    return jsonify(access_token=access_token), 200
+    if checkPassword(password, user.password):
+        # Identity can be any data that is json serializable
+        access_token = create_access_token(
+            identity={'emailAddress': emailAddress, 'id': user.id, 'isAdmin': user.isAdmin})
+        return jsonify(access_token=access_token), 200
+    return jsonify({"msg": "Bad emailAddress or password"}), 401
 
 
 if __name__ == '__main__':
