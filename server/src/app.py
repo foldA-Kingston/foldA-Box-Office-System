@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import enum
@@ -16,30 +16,34 @@ migrate = Migrate(app, db)
 
 class Event_Ticket(db.Model):
     __tablename__ = 'Event_Ticket'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True,
+                   autoincrement=True, nullable=False)
 
-    event_id = db.Column(db.Integer, db.ForeignKey('Event.id'))
+    event_id = db.Column(db.Integer, db.ForeignKey('Event.id'), nullable=False)
     event = db.relationship('Event', backref='Event_Ticket')
 
-    ticket_id = db.Column(db.Integer, db.ForeignKey('Ticket.id'))
+    ticket_id = db.Column(db.Integer, db.ForeignKey(
+        'Ticket.id'), nullable=False)
     ticket = db.relationship(
         'Ticket', backref='Event_Ticket')
 
 
 class Event(db.Model):
     __tablename__ = 'Event'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True,
+                   autoincrement=True, nullable=False)
     artistName = db.Column(db.String)
     imageUrl = db.Column(db.String)
     embedMedia = db.Column(db.String)
-    description = db.Column(db.String)
-    startTime = db.Column(db.DateTime)
-    endTime = db.Column(db.DateTime)
+    description = db.Column(db.String, nullable=False)
+    startTime = db.Column(db.DateTime, nullable=False)
+    endTime = db.Column(db.DateTime, nullable=False)
     venue = db.Column(db.String)
     capacity = db.Column(db.Integer)
-    isFull = db.Column(db.Boolean)
+    isFull = db.Column(db.Boolean, nullable=False, default=False)
 
-    purchasable_id = db.Column(db.Integer, db.ForeignKey('Purchasable.id'))
+    purchasable_id = db.Column(db.Integer, db.ForeignKey(
+        'Purchasable.id'), nullable=False)
     purchasable = db.relationship(
         'Purchasable', backref='Event')
 
@@ -51,54 +55,64 @@ class PurchasableTypes1(enum.Enum):
 
 class Purchasable(db.Model):
     __tablename__ = 'Purchasable'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    type = db.Column(db.Enum(PurchasableTypes1))
-    numTickets = db.Column(db.Integer)
-    isSoldOut = db.Column(db.Boolean, nullable=False)
+    id = db.Column(db.Integer, primary_key=True,
+                   autoincrement=True, nullable=False)
+    type = db.Column(db.Enum(PurchasableTypes1), nullable=False)
+    numTickets = db.Column(db.Integer, nullable=False)
+    isSoldOut = db.Column(db.Boolean, nullable=False, default=False)
 
 
 class Ticket(db.Model):
     __tablename__ = 'Ticket'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    isPurchased = db.Column(db.Boolean)
-    createDate = db.Column(db.DateTime, server_default=db.func.now())
+    id = db.Column(db.Integer, primary_key=True,
+                   autoincrement=True, nullable=False)
+    isPurchased = db.Column(db.Boolean, nullable=False, default=False)
+    createDate = db.Column(
+        db.DateTime, server_default=db.func.now(), nullable=False)
     purchaseDate = db.Column(db.DateTime)
 
-    purchasable_id = db.Column(db.Integer, db.ForeignKey('Purchasable.id'))
+    purchasable_id = db.Column(db.Integer, db.ForeignKey(
+        'Purchasable.id'), nullable=False)
     purchasable = db.relationship(
         'Purchasable', backref='Ticket')
 
-    ticketClass_id = db.Column(db.Integer, db.ForeignKey('TicketClass.id'))
+    ticketClass_id = db.Column(db.Integer, db.ForeignKey(
+        'TicketClass.id'), nullable=False)
     ticketClass = db.relationship(
         'TicketClass', backref='Ticket')
 
-    user_id = db.Column(db.Integer, db.ForeignKey('User.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('User.id'), nullable=False)
     user = db.relationship('User', backref='Ticket')
 
 
 class Purchasable_TicketClass(db.Model):
     __tablename__ = 'Purchasable_TicketClass'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True,
+                   autoincrement=True, nullable=False)
 
-    purchasable_id = db.Column(db.Integer, db.ForeignKey('Purchasable.id'))
+    purchasable_id = db.Column(db.Integer, db.ForeignKey(
+        'Purchasable.id'), nullable=False)
     purchasable = db.relationship(
         'Purchasable', backref='Purchasable_TicketClass')
 
-    ticketClass_id = db.Column(db.Integer, db.ForeignKey('TicketClass.id'))
+    ticketClass_id = db.Column(db.Integer, db.ForeignKey(
+        'TicketClass.id'), nullable=False)
     ticketClass = db.relationship(
         'TicketClass', backref='Purchasable_TicketClass')
 
 
 class TicketClass(db.Model):
     __tablename__ = 'TicketClass'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    description = db.Column(db.String)
-    price = db.Column(db.Integer)
+    id = db.Column(db.Integer, primary_key=True,
+                   autoincrement=True, nullable=False)
+    description = db.Column(db.String, nullable=False)
+    price = db.Column(db.Integer, nullable=False)
 
 
 class User(db.Model):
     __tablename__ = 'User'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True,
+                   autoincrement=True, nullable=False)
     isAdmin = db.Column(db.Boolean, nullable=False, default=False)
     emailAddress = db.Column(db.String, nullable=False)
     createDate = db.Column(
@@ -143,50 +157,55 @@ def serialize(obj):
             for c in db.inspect(obj).mapper.column_attrs}
 
 
+# Test route
 @app.route('/')
 def hello():
     return "Hello World!"
 
 
+# Create new user
 @app.route("/users/", methods=['POST'])
 def createUser():
-    # print(request.is_json)
-    # content = request.get_json()
-    # print(content)
-    # return 'JSON posted'
-    if request.form:
-        user = User(name=request.form.get("name"),
-                    emailAddress=request.form.get("emailAddress"))
-        db.session.add(user)
-        db.session.commit()
-        users = db.session.query(User)
-        return [serialize(user) for user in users][-1]
+    user = User(name=request.form.get("name"),
+                emailAddress=request.form.get("emailAddress"))
+    db.session.add(user)
+    db.session.commit()
+    user = db.session.query(User).first()
+    return serialize(user)
 
 
+# Get users
 @app.route("/users/", methods=['GET'])
 def getUsers():
-    print(request.is_json)
-    content = request.get_json()
-    print(content)
-    return 'JSON posted'
+    users = db.session.query(User).all()
+    return jsonify([serialize(user) for user in users])
 
 
+# Get one user
+@app.route("/users/<id>/", methods=['GET'])
+def getUser(id):
+    user = db.session.query(User).filter(User.id == id).first()
+    return serialize(user)
+
+
+# Update one user
 @app.route("/users/<id>/", methods=['PUT'])
-def updateUser():
-    print(request.is_json)
-    content = request.get_json()
-    print(content)
-    return 'JSON posted'
+def updateUser(id):
+    user = db.session.query(User).filter(User.id == id).first()
+    user.name = request.form.get("name")
+    db.session.commit()
+    return serialize(user)
 
 
+# Delete one user
 @app.route("/users/<id>/", methods=['DELETE'])
-def deleteUser():
-    print(request.is_json)
-    content = request.get_json()
-    print(content)
-    return 'JSON posted'
+def deleteUser(id):
+    user = db.session.query(User).filter(User.id == id).delete()
+    db.session.commit()
+    return "Deleted user {}".format(id)
 
 
+# Get authentication token
 @app.route("/auth/", methods=['GET'])
 def getAuthToken():
     print(request.is_json)
