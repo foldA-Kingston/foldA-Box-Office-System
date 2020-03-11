@@ -1,4 +1,5 @@
 <script>
+  import { jwt } from "../stores.js";
   export let segment;
 </script>
 
@@ -70,7 +71,21 @@
       <a class:selected={segment === 'Account'} href="Account">Account</a>
     </li>
     <li>
-      <a class:selected={segment === 'Questionnaire'} href="Questionnaire">Questionnaire</a>
+      <a class:selected={segment === 'Questionnaire'} href="Questionnaire">
+        Questionnaire
+      </a>
+    </li>
+    <li>
+      {#if $jwt}
+        <button
+          on:click={() => {
+            jwt.set('');
+          }}>
+          Log out
+        </button>
+      {:else}
+        <a class:selected={segment === 'Signin'} href="Signin">Log in</a>
+      {/if}
     </li>
   </ul>
 </nav>

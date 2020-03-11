@@ -6,3 +6,4 @@ py-bcrypt==0.4
 Flask-JWT-Extended==3.24.1
 enum==0.4.7
 sqlathanor==0.5.1
+flask-cors==3.0.8

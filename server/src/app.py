@@ -8,6 +8,7 @@ from flask_jwt_extended import (
 )
 import enum
 import bcrypt
+from flask_cors import CORS
 
 app = Flask(__name__)
 
@@ -16,6 +17,9 @@ app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://rqkxpfbo:Rpk8w646Zf5pIide1L9KP-_p4ElwNFsw@rajje.db.elephantsql.com:5432/rqkxpfbo'
 
 app.config['JWT_SECRET_KEY'] = 'super-secret'  # TODO: Change this
+
+CORS(app)
+
 jwt = JWTManager(app)
 
 SQLALCHEMY_TRACK_MODIFICATIONS = True
