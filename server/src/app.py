@@ -30,9 +30,10 @@ migrate = Migrate(app, db)
 
 
 Event_Ticket = db.Table('Event_Ticket', db.MetaData(),
-    db.Column("event_id", db.Integer, db.ForeignKey('Event.id'), nullable=False),
-    db.Column("ticket_id", db.Integer, db.ForeignKey(
-        'Ticket.id'), nullable=False))
+                        db.Column("event_id", db.Integer, db.ForeignKey(
+                            'Event.id'), nullable=False),
+                        db.Column("ticket_id", db.Integer, db.ForeignKey(
+                            'Ticket.id'), nullable=False))
 
 
 class Event(db.Model):
@@ -135,7 +136,7 @@ class User(db.Model):
 
     feedbackAnswers = db.relationship(
         'FeedbackAnswer', backref='User')
-    
+
     tickets = db.relationship(
         'Ticket', backref='User')
 
@@ -372,10 +373,24 @@ def createDayPass():
     return "Forbidden", 403
 
 
+# Get purchasables
+@app.route("/purchasables/", methods=['GET'])
+def getPurchasables():
+    purchasables = db.session.query(Purchasable).all()
+
+    return jsonify([
+        {
+            **serialize(p),
+            "events": [serialize(e) for e in p.events],
+            "startTime":  min([e.startTime for e in p.events]) if len(p.events) else None
+        } for p in purchasables])
+
+
 # Get day passes
 @app.route("/dayPasses/", methods=['GET'])
 def getDayPasses():
-    purchasables = db.session.query(Purchasable).filter(Purchasable.type == PurchasableTypes2.dayPass).all()
+    purchasables = db.session.query(Purchasable).filter(
+        Purchasable.type == PurchasableTypes2.dayPass).all()
     return jsonify([{**serialize(p), "events": [serialize(e) for e in p.events]} for p in purchasables])
 
 
