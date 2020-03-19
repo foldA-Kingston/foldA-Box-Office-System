@@ -69,7 +69,7 @@
         </div>
       </div>
       <div class="buttonWrapper">
-        <button>Purchase</button>
+        <a class="button" href="/todo">Buy Ticket</a>
       </div>
     </div>
   </Panel>

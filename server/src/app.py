@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 from sqlathanor import FlaskBaseModel, initialize_flask_sqlathanor
 from flask_migrate import Migrate
@@ -49,6 +49,7 @@ class Event(db.Model):
     venue = db.Column(db.String)
     capacity = db.Column(db.Integer)
     isFull = db.Column(db.Boolean, nullable=False, default=False)
+    name = db.Column(db.String, nullable=False)
 
     purchasable_id = db.Column(db.Integer, db.ForeignKey(
         'Purchasable.id'), nullable=False)
@@ -67,6 +68,7 @@ class Purchasable(db.Model):
                    autoincrement=True, nullable=False, unique=True)
 
     description = db.Column(db.String, nullable=False)
+    name = db.Column(db.String, nullable=False)
     type = db.Column(db.Enum(PurchasableTypes2), nullable=False)
     numTickets = db.Column(db.Integer, nullable=False)
     isSoldOut = db.Column(db.Boolean, nullable=False, default=False)
@@ -197,15 +199,22 @@ def checkPassword(plain_text_password, hashed_password):
 # Create new user
 @app.route("/users/", methods=['POST'])
 def createUser():
-    user = User(
-        name=request.json.get("name"),
-        emailAddress=request.json.get("emailAddress"),
-        password=getHashedPassword(request.json.get("password"))
-    )
-    db.session.add(user)
-    db.session.commit()
-    user = db.session.query(User).filter(User.id == user.id).one()
-    return serialize(user)
+    name = request.json.get("name")
+    emailAddress = request.json.get("emailAddress")
+    password = request.json.get("password")
+
+    if name and emailAddress and password:
+        user = User(
+            name=name,
+            emailAddress=emailAddress,
+            password=getHashedPassword(password)
+        )
+        db.session.add(user)
+        db.session.commit()
+        user = db.session.query(User).filter(User.id == user.id).one()
+        return serialize(user)
+    else:
+        return "Bad request", 400
 
 
 # Get users
@@ -267,6 +276,7 @@ def createEvent():
         event = Event(
             artistName=request.json.get("artistName"),
             description=request.json.get("description"),
+            name=request.json.get("name"),
             startTime=request.json.get("startTime"),
             endTime=request.json.get("endTime"),
             venue=request.json.get("venue"),
@@ -286,7 +296,7 @@ def createEvent():
             purchasable = Purchasable(
                 type=PurchasableTypes2(request.json['type']) if request.json.get(
                     'type') else PurchasableTypes2.individual,
-                numTickets=request.json.get("capacity"), description=request.json.get("description")
+                numTickets=request.json.get("capacity"), description=request.json.get("description"), name=request.json.get("name")
             )
             db.session.add(purchasable)
             db.session.flush()
@@ -332,6 +342,7 @@ def updateEvent(id):
         event = db.session.query(Event).filter(Event.id == id).one()
         event.artistName = request.json.get("artistName"),
         event.description = request.json.get("description"),
+        event.name = request.json.get("name"),
         event.startTime = request.json.get("startTime"),
         event.endTime = request.json.get("endTime"),
         event.venue = request.json.get("venue"),
@@ -363,7 +374,8 @@ def createDayPass():
         purchasable = Purchasable(
             type=request.json.get("type"),
             numTickets=request.json.get("numTickets"),
-            description=request.json.get("description")
+            description=request.json.get("description"),
+            name=request.json.get("name")
         )
         db.session.add(purchasable)
         db.session.commit()
@@ -414,6 +426,7 @@ def updatePurchasable(id):
         purchasable.type = request.json.get("type")
         purchasable.numTickets = request.json.get("numTickets")
         purchasable.description = request.json.get("description")
+        purchasable.name = request.json.get("name")
         db.session.commit()
         return serialize(purchasable)
     return "Forbidden", 403

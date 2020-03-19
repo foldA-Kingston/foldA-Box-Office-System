@@ -2,26 +2,22 @@
   import { goto } from "@sapper/app";
 
   let name = "";
-  let emailAddress = "";
-  let password = "";
-  let confirmpassword = "";
 
   function handleCreate() {
     if (password === confirmpassword) {
-      fetch("http://localhost:5000/users/", {
+      fetch("http://localhost:5000/events/", {
         mode: "cors",
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          name,
-          emailAddress,
-          password
+          name
         })
       }).then(r => {
         if (r.ok) {
-          goto("/Signin");
+          const id = 1;
+          goto(`/individual-events/${id}`);
         } else {
           alert("Something went wrong. Please try again in a moment.");
         }
@@ -42,17 +38,8 @@
     padding: 0.5rem;
   }
   .name,
-  .emails,
-  .passwordsetting,
-  .confirmpassword,
-  .createandsignin {
+  .confirm {
     padding: 1rem;
-  }
-
-  .signin {
-    background: transparent;
-    color: #4045ed;
-    font-style: italic;
   }
 </style>
 
@@ -68,24 +55,10 @@
     <h3>Name</h3>
     <input bind:value={name} />
   </div>
-  <div class="emails">
-    <h3>Email</h3>
-    <input bind:value={emailAddress} />
-  </div>
-  <div class="passwordsetting">
-    <h3>Password</h3>
-    <input type="password" bind:value={password} />
-  </div>
-  <div class="confirmpassword">
-    <h3>Confirm Password</h3>
-    <input type="password" bind:value={confirmpassword} />
-  </div>
-  <div class="createandsignin">
+
+  <div class="confirm">
     <button class="create" on:click={handleCreate}>
       <h3>Create Account</h3>
-    </button>
-    <button class="signin" onclick="location='Signin'">
-      <h3>Sign in</h3>
     </button>
   </div>
 </div>

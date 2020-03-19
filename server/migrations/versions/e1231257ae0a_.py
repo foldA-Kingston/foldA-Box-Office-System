@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: d42eb68aed8a
+Revision ID: e1231257ae0a
 Revises: 
-Create Date: 2020-03-11 15:18:47.937460
+Create Date: 2020-03-19 16:12:35.895068
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'd42eb68aed8a'
+revision = 'e1231257ae0a'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,6 +21,7 @@ def upgrade():
     op.create_table('Purchasable',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('description', sa.String(), nullable=False),
+    sa.Column('name', sa.String(), nullable=False),
     sa.Column('type', sa.Enum('individual', 'dayPass', name='purchasabletypes2'), nullable=False),
     sa.Column('numTickets', sa.Integer(), nullable=False),
     sa.Column('isSoldOut', sa.Boolean(), nullable=False),
@@ -59,6 +60,7 @@ def upgrade():
     sa.Column('venue', sa.String(), nullable=True),
     sa.Column('capacity', sa.Integer(), nullable=True),
     sa.Column('isFull', sa.Boolean(), nullable=False),
+    sa.Column('name', sa.String(), nullable=False),
     sa.Column('purchasable_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['purchasable_id'], ['Purchasable.id'], ),
     sa.PrimaryKeyConstraint('id'),

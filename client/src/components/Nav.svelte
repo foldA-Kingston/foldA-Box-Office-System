@@ -56,10 +56,10 @@
     <li>
       <img
         src="https://www.folda.ca/wp-content/themes/folda/assets/img/logo_footer.svg"
-        alt="Italian Trulli" />
+        alt="foldA Logo" />
     </li>
     <li>
-      <a class:selected={segment === 'index'} href="events">Events</a>
+      <a class:selected={segment === ''} href="/">Events</a>
     </li>
     <li>
       <a class:selected={segment === 'DayPasses'} href="DayPasses">DayPasses</a>
@@ -84,7 +84,7 @@
           Log out
         </button>
       {:else}
-        <a class:selected={segment === 'Signin'} href="Signin">Log in</a>
+        <a class:selected={segment === 'SignIn'} href="SignIn">Log in</a>
       {/if}
     </li>
   </ul>

@@ -64,13 +64,10 @@
       <div class="artistName">
         Artists: {[...new Set(events.map(e => e.artistName))].join(', ')}
       </div>
-      <div>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua.
-      </div>
+      <div>Includes {events.length} events</div>
     </div>
     <div class="buttonWrapper">
-      <button>Purchase</button>
+      <a class="button" href="/todo">Buy Day Pass</a>
     </div>
   </div>
 </Panel>
