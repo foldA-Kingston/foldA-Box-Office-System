@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import DayPass from "../components/DayPass.svelte";
   import IndividualEvent from "../components/IndividualEvent.svelte";
+  import { isAdmin } from "../stores.js";
 
   let purchasables = [];
 
@@ -32,6 +33,12 @@
   <title>Events</title>
 </svelte:head>
 <h1 class="heading">Events</h1>
+{#if $isAdmin}
+  <div>
+    <a class="button" href="NewIndividualEvent">New single event</a>
+    <a class="button" href="NewIndividualEvent">New day pass</a>
+  </div>
+{/if}
 <div class="events">
   {#if purchasables.length}
     {#each purchasables as purchasable}

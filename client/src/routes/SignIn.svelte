@@ -1,5 +1,5 @@
 <script>
-  import { jwt } from "../stores.js";
+  import { jwt, emailAddress, isAdmin, userId } from "../stores.js";
   import { goto } from "@sapper/app";
 
   let email = "";
@@ -19,7 +19,10 @@
     });
     const data = await result.json();
 
-    jwt.set(data.token);
+    jwt.set(data.access_token);
+    emailAddress.set(data.emailAddress);
+    isAdmin.set(data.isAdmin);
+    userId.set(data.userId);
 
     goto("/");
     // TODO: set more info here, like user's name and email
@@ -68,7 +71,7 @@
   </div>
   <div class="password">
     <h3>Password</h3>
-    <input bind:value={password} />
+    <input type="password" bind:value={password} />
   </div>
 
   <div class="signinandcreate">

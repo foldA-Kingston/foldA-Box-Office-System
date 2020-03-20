@@ -466,7 +466,7 @@ def authenticate():
         # Identity can be any data that is json serializable
         access_token = create_access_token(
             identity={'emailAddress': emailAddress, 'id': user.id, 'isAdmin': user.isAdmin})
-        return jsonify(access_token=access_token), 200
+        return jsonify(access_token=access_token, emailAddress=emailAddress, userId=user.id, isAdmin=user.isAdmin), 200
     return jsonify({"msg": "Bad emailAddress or password"}), 401
 
 

@@ -51,22 +51,19 @@
 </style>
 
 {#if event}
-  <Panel title={`Single event: ${purchasable.description}`}>
+  <Panel title={`Single event: ${purchasable.name}`}>
     <div class="panelContent">
       <div class="thumbnail">
-        <img src="event2.png" alt={event.description} />
+        <img src="event2.png" alt={event.name} />
       </div>
       <div>
         <div class="eventHeading">
-          <h2>{event.description}</h2>
+          <h2>{event.name}</h2>
           <div>&bull;</div>
           <time datetime={event.startTime}>{event.startTime}</time>
         </div>
         <div class="artistName">{event.artistName}</div>
-        <div>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        </div>
+        <div>{event.description}</div>
       </div>
       <div class="buttonWrapper">
         <a class="button" href="/todo">Buy Ticket</a>

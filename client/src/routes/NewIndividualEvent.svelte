@@ -7,16 +7,27 @@
   import "flatpickr/dist/themes/light.css";
 
   let artistName = "";
-  let imageUrl = "";
-  let embedMedia = "";
+  let imageUrl = null;
+  let embedMedia = null;
   let description = "";
-  let startTime = "";
-  let endTime = "";
+  let startTime = null;
+  let endTime = null;
   let venue = "";
   let capacity = 0;
   let name = "";
 
-  function handleCreate() {
+  const flatpickrOptions = {
+    enableTime: true,
+    onChange: (selectedDates, dateStr, instance) => {
+      console.log("Options onChange handler");
+    }
+  };
+
+  function changeStartTime(selectedDates, dateStr, instance) {
+    console.log("Svelte onChange handler");
+  }
+
+  $: handleCreate = () => {
     fetch("http://localhost:5000/events/", {
       mode: "cors",
       method: "POST",
@@ -43,7 +54,7 @@
         alert("Something went wrong. Please try again in a moment.");
       }
     });
-  }
+  };
 </script>
 
 <style>
@@ -72,7 +83,6 @@
 <svelte:head>
   <title>New Individual Event</title>
 </svelte:head>
-
 <div>
   <h1>New Individual Event</h1>
 </div>
@@ -99,11 +109,17 @@
   </div>
   <div class="inputField">
     <h3>Start date / time</h3>
-    <input bind:value={startTime} />
+    <Flatpickr
+      options={flatpickrOptions}
+      bind:value={startTime}
+      placeholder="Start time" />
   </div>
   <div class="inputField">
     <h3>End date / time</h3>
-    <input bind:value={endTime} />
+    <Flatpickr
+      options={flatpickrOptions}
+      bind:value={endTime}
+      placeholder="End time" />
   </div>
   <div class="inputField">
     <h3>Venue</h3>
