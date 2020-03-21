@@ -29,11 +29,36 @@ db = initialize_flask_sqlathanor(db)
 migrate = Migrate(app, db)
 
 
-Event_Ticket = db.Table('Event_Ticket', db.MetaData(),
-                        db.Column("event_id", db.Integer, db.ForeignKey(
-                            'Event.id'), nullable=False),
-                        db.Column("ticket_id", db.Integer, db.ForeignKey(
-                            'Ticket.id'), nullable=False))
+class Event_Ticket(db.Model):
+    __tablename__ = 'Event_Ticket'
+    id = db.Column(db.Integer, primary_key=True,
+                   autoincrement=True, nullable=False, unique=True)
+
+    event_id = db.Column(db.Integer, db.ForeignKey(
+        'Event.id'), nullable=False)
+    event = db.relationship(
+        'Event', backref='Event_Ticket', lazy="joined")
+
+    ticket_id = db.Column(db.Integer, db.ForeignKey(
+        'Ticket.id'), nullable=False)
+    ticket = db.relationship(
+        'Ticket', backref='Event_Ticket', lazy="joined")
+
+
+class Purchasable_TicketClass(db.Model):
+    __tablename__ = 'Purchasable_TicketClass'
+    id = db.Column(db.Integer, primary_key=True,
+                   autoincrement=True, nullable=False, unique=True)
+
+    purchasable_id = db.Column(db.Integer, db.ForeignKey(
+        'Purchasable.id'), nullable=False)
+    purchasable = db.relationship(
+        'Purchasable', backref='Purchasable_TicketClass', lazy="joined")
+
+    ticketClass_id = db.Column(db.Integer, db.ForeignKey(
+        'TicketClass.id'), nullable=False)
+    ticketClass = db.relationship(
+        'TicketClass', backref='Purchasable_TicketClass', lazy="joined")
 
 
 class Event(db.Model):
@@ -79,8 +104,8 @@ class Purchasable(db.Model):
     tickets = db.relationship(
         'Ticket', backref='Purchasable', lazy="joined")
 
-    ticketClasses = db.relationship('TicketClass', secondary=ticketClasses,
-                                    lazy='subquery', backref=db.backref('Purchasable', lazy=True))
+    ticketClasses = db.relationship(
+        'Purchasable_TicketClass', backref='Purchasable', lazy="joined")
 
 
 class Ticket(db.Model):
@@ -106,12 +131,6 @@ class Ticket(db.Model):
     user = db.relationship('User', backref='Ticket')
 
 
-Purchasable_TicketClass = db.Table('Purchasable_TicketClass', db.MetaData(),
-                                   db.Column('purchasable_id', db.Integer, db.ForeignKey(
-                                       'Purchasable.id'), nullable=False),
-                                   db.Column('ticketClass_id',  db.Integer, db.ForeignKey('TicketClass.id'), nullable=False))
-
-
 class TicketClass(db.Model):
     __tablename__ = 'TicketClass'
     id = db.Column(db.Integer, primary_key=True,
@@ -121,6 +140,9 @@ class TicketClass(db.Model):
 
     tickets = db.relationship(
         'Ticket', backref='TicketClass')
+
+    purchasables = db.relationship(
+        'Purchasable_TicketClass', backref='TicketClass')
 
 
 class User(db.Model):
@@ -304,12 +326,14 @@ def createEvent():
 
             ticketClasses = request.json['ticketClasses']
 
-            for tc_id in ticketClasses:
-                ticketClass = TicketClass(id=tc_id)
-                purchasable.
-
             db.session.add(purchasable)
             db.session.flush()
+
+            for tc_id in ticketClasses:
+                relationship = Purchasable_TicketClass(
+                    purchasable_id=purchasable.id, ticketClass_id=tc_id)
+                db.session.add(relationship)
+
             event.purchasable_id = purchasable.id
 
         db.session.add(event)
@@ -318,7 +342,11 @@ def createEvent():
         event = db.session.query(Event).filter(Event.id == event.id).one()
         purchasable = db.session.query(Purchasable).filter(
             Purchasable.id == purchasable.id).one()
-        return {**serialize(event), "purchasable": serialize(purchasable)}
+
+        tcs = db.session.query(Purchasable_TicketClass).filter(
+            Purchasable_TicketClass.purchasable_id == purchasable.id).join(TicketClass, Purchasable_TicketClass.ticketClass_id == TicketClass.id).all()
+
+        return {**serialize(event), "purchasable": {**serialize(purchasable), "ticketClasses": [{"id": tc.ticketClass.id, "description": tc.ticketClass.description, "price": tc.ticketClass.price} for tc in tcs]}}
     return "Forbidden", 403
 
 
@@ -458,22 +486,27 @@ def deletePurchasable(id):
 
 # Create new user
 @app.route("/ticketClasses/", methods=['POST'])
+@jwt_required
 def createTicketClass():
-    description = request.json.get("description")
-    price = request.json.get("price")
+    identity = get_jwt_identity()
+    if identity['isAdmin']:
+        description = request.json.get("description")
+        price = request.json.get("price")
 
-    if description and price:
-        ticketClass = TicketClass(
-            description=description,
-            price=price
-        )
-        db.session.add(ticketClass)
-        db.session.commit()
-        ticketClass = db.session.query(TicketClass).filter(
-            TicketClass.id == ticketClass.id).one()
-        return serialize(ticketClass)
+        if description and price:
+            ticketClass = TicketClass(
+                description=description,
+                price=price
+            )
+            db.session.add(ticketClass)
+            db.session.commit()
+            ticketClass = db.session.query(TicketClass).filter(
+                TicketClass.id == ticketClass.id).one()
+            return serialize(ticketClass)
+        else:
+            return "Bad request", 400
     else:
-        return "Bad request", 400
+        return "Forbidden", 403
 
 # Get ticketClasses
 @app.route("/ticketClasses/", methods=['GET'])

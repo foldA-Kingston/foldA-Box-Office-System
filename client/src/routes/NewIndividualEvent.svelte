@@ -1,6 +1,6 @@
 <script>
   import { goto } from "@sapper/app";
-  import { onMount } from "svelte";
+  import { onMount, onDestroy } from "svelte";
   import { jwt } from "../stores.js";
   import Flatpickr from "svelte-flatpickr";
   import Select from "svelte-select";
@@ -44,12 +44,13 @@
         endTime,
         venue,
         capacity,
-        name
+        name,
+        ticketClasses: selectedValue.map(tc => tc.value)
       })
-    }).then(r => {
+    }).then(async r => {
       if (r.ok) {
-        const id = 1;
-        goto(`/individual-events/${id}`);
+        const result = await r.json();
+        goto(`/individual-events/${result.id}`);
       } else {
         alert("Something went wrong. Please try again in a moment.");
       }
@@ -58,11 +59,7 @@
 
   let ticketClassOptions;
 
-  onMount(() => {
-    fetchTicketClasses();
-  });
-
-  const fetchTicketClasses = async () => {
+  $: fetchTicketClasses = async () => {
     const res = await fetch(`http://localhost:5000/ticketClasses/`, {
       mode: "cors",
       headers: {
@@ -76,6 +73,10 @@
     }));
   };
 
+  onMount(() => {
+    fetchTicketClasses();
+  });
+
   const createNewTicketClass = async () => {
     const description = prompt("Ticket class name:");
     const price = prompt("Ticket class price:");
@@ -85,7 +86,8 @@
         mode: "cors",
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${$jwt}`
         },
         body: JSON.stringify({
           description,
@@ -107,7 +109,6 @@
     width: 40%;
     border-radius: 4px;
     border: 1px solid #333;
-    overflow: hidden;
     margin: 1rem 0.5rem;
     padding: 0.5rem;
   }
