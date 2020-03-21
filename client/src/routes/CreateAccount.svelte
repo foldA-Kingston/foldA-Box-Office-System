@@ -21,7 +21,7 @@
         })
       }).then(r => {
         if (r.ok) {
-          goto("/Signin");
+          goto("/SignIn");
         } else {
           alert("Something went wrong. Please try again in a moment.");
         }

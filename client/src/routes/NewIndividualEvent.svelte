@@ -1,7 +1,11 @@
 <script>
   import { goto } from "@sapper/app";
+  import { onMount } from "svelte";
   import { jwt } from "../stores.js";
   import Flatpickr from "svelte-flatpickr";
+  import Select from "svelte-select";
+
+  let selectedValue;
 
   import "flatpickr/dist/flatpickr.css";
   import "flatpickr/dist/themes/light.css";
@@ -22,10 +26,6 @@
       console.log("Options onChange handler");
     }
   };
-
-  function changeStartTime(selectedDates, dateStr, instance) {
-    console.log("Svelte onChange handler");
-  }
 
   $: handleCreate = () => {
     fetch("http://localhost:5000/events/", {
@@ -54,6 +54,51 @@
         alert("Something went wrong. Please try again in a moment.");
       }
     });
+  };
+
+  let ticketClassOptions;
+
+  onMount(() => {
+    fetchTicketClasses();
+  });
+
+  const fetchTicketClasses = async () => {
+    const res = await fetch(`http://localhost:5000/ticketClasses/`, {
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+    const ticketClasses = await res.json();
+    ticketClassOptions = ticketClasses.map(tc => ({
+      label: `${tc.description} – $${tc.price}`,
+      value: tc.id
+    }));
+  };
+
+  const createNewTicketClass = async () => {
+    const description = prompt("Ticket class name:");
+    const price = prompt("Ticket class price:");
+
+    if (description && price) {
+      await fetch("http://localhost:5000/ticketClasses/", {
+        mode: "cors",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          description,
+          price: Number(price)
+        })
+      }).then(r => {
+        if (r.ok) {
+          fetchTicketClasses();
+        } else {
+          alert("Something went wrong. Please try again in a moment.");
+        }
+      });
+    }
   };
 </script>
 
@@ -131,11 +176,12 @@
   </div>
   <div class="ticketClassWrapper">
     <h3>Ticket Classes</h3>
-    <em>Select box here</em>
+    {#if ticketClassOptions}
+      <Select items={ticketClassOptions} isMulti bind:selectedValue />
+    {/if}
     <br />
-    <button>Create new ticket class</button>
+    <button on:click={createNewTicketClass}>Create new ticket class</button>
   </div>
-
   <div class="confirm">
     <button class="create" on:click={handleCreate}>
       <h3>Create Event</h3>

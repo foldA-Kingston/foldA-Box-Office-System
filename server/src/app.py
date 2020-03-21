@@ -79,6 +79,9 @@ class Purchasable(db.Model):
     tickets = db.relationship(
         'Ticket', backref='Purchasable', lazy="joined")
 
+    ticketClasses = db.relationship('TicketClass', secondary=ticketClasses,
+                                    lazy='subquery', backref=db.backref('Purchasable', lazy=True))
+
 
 class Ticket(db.Model):
     __tablename__ = 'Ticket'
@@ -114,7 +117,7 @@ class TicketClass(db.Model):
     id = db.Column(db.Integer, primary_key=True,
                    autoincrement=True, nullable=False, unique=True)
     description = db.Column(db.String, nullable=False)
-    price = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Float, nullable=False)
 
     tickets = db.relationship(
         'Ticket', backref='TicketClass')
@@ -298,6 +301,13 @@ def createEvent():
                     'type') else PurchasableTypes2.individual,
                 numTickets=request.json.get("capacity"), description=request.json.get("description"), name=request.json.get("name")
             )
+
+            ticketClasses = request.json['ticketClasses']
+
+            for tc_id in ticketClasses:
+                ticketClass = TicketClass(id=tc_id)
+                purchasable.
+
             db.session.add(purchasable)
             db.session.flush()
             event.purchasable_id = purchasable.id
@@ -444,6 +454,32 @@ def deletePurchasable(id):
         db.session.commit()
         return "Deleted purchasable {}".format(id)
     return "Forbidden", 403
+
+
+# Create new user
+@app.route("/ticketClasses/", methods=['POST'])
+def createTicketClass():
+    description = request.json.get("description")
+    price = request.json.get("price")
+
+    if description and price:
+        ticketClass = TicketClass(
+            description=description,
+            price=price
+        )
+        db.session.add(ticketClass)
+        db.session.commit()
+        ticketClass = db.session.query(TicketClass).filter(
+            TicketClass.id == ticketClass.id).one()
+        return serialize(ticketClass)
+    else:
+        return "Bad request", 400
+
+# Get ticketClasses
+@app.route("/ticketClasses/", methods=['GET'])
+def getTicketClasss():
+    ticketClasses = db.session.query(TicketClass).all()
+    return jsonify([serialize(ticketClass) for ticketClass in ticketClasses])
 
 
 @app.route('/auth/', methods=['POST'])
