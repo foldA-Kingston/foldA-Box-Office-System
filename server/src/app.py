@@ -367,7 +367,11 @@ def getEvent(id):
     # add related purchasable to event
     purchasable = db.session.query(Purchasable).filter(
         Purchasable.id == event.purchasable_id).one()
-    return {**serialize(event), "purchasable": serialize(purchasable)}
+
+    tcs = db.session.query(Purchasable_TicketClass).filter(Purchasable_TicketClass.purchasable_id == purchasable.id).join(
+        TicketClass, Purchasable_TicketClass.ticketClass_id == TicketClass.id).all()
+
+    return {**serialize(event), "purchasable": {**serialize(purchasable), "ticketClasses": [{"id": tc.ticketClass.id, "description": tc.ticketClass.description, "price": tc.ticketClass.price} for tc in tcs]}}
 
 
 # Update one event
