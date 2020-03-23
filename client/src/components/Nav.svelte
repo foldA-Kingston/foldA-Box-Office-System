@@ -1,5 +1,5 @@
 <script>
-  import { jwt } from "../stores.js";
+  import { jwt, userId, isAdmin, emailAddress } from "../stores.js";
   export let segment;
 </script>
 
@@ -80,6 +80,9 @@
         <button
           on:click={() => {
             jwt.set('');
+            userId.set('');
+            isAdmin.set('');
+            emailAddress.set('');
           }}>
           Log out
         </button>
