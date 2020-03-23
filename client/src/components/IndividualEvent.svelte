@@ -66,7 +66,9 @@
         <div>{event.description}</div>
       </div>
       <div class="buttonWrapper">
-        <a class="button" href="/todo">Buy Ticket</a>
+        <a class="button" href={`/individual-events/${event.id}`}>
+          Buy Tickets
+        </a>
       </div>
     </div>
   </Panel>

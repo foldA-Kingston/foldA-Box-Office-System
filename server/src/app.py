@@ -115,6 +115,7 @@ class Ticket(db.Model):
     isPurchased = db.Column(db.Boolean, nullable=False, default=False)
     createDate = db.Column(
         db.DateTime, server_default=db.func.now(), nullable=False)
+
     purchaseDate = db.Column(db.DateTime)
 
     purchasable_id = db.Column(db.Integer, db.ForeignKey(
@@ -453,7 +454,11 @@ def getDayPasses():
 def getPurchasable(id):
     purchasable = db.session.query(Purchasable).filter(
         Purchasable.id == id).one()
-    return {**serialize(purchasable), "events": [serialize(e) for e in purchasable.events]}
+
+    tcs = db.session.query(Purchasable_TicketClass).filter(Purchasable_TicketClass.purchasable_id == purchasable.id).join(
+        TicketClass, Purchasable_TicketClass.ticketClass_id == TicketClass.id).all()
+
+    return {**serialize(purchasable), "events": [serialize(e) for e in purchasable.events], "ticketClasses": [{"id": tc.ticketClass.id, "description": tc.ticketClass.description, "price": tc.ticketClass.price} for tc in tcs]}
 
 
 # Update one purchasable
@@ -517,6 +522,85 @@ def createTicketClass():
 def getTicketClasss():
     ticketClasses = db.session.query(TicketClass).all()
     return jsonify([serialize(ticketClass) for ticketClass in ticketClasses])
+
+
+# Create ticket for user
+@app.route("/users/<id>/cart/", methods=['POST'])
+@jwt_required
+def addToCart(id):
+    identity = get_jwt_identity()
+    id = int(id)
+    if identity['id'] == id or identity['isAdmin']:
+
+        purchasableId = request.json.get("purchasableId")
+        ticketClassId = request.json.get("ticketClassId")
+        purchasable = db.session.query(Purchasable).filter(
+            Purchasable.id == purchasableId).one()
+        ticketClasses = db.session.query(Purchasable_TicketClass).filter(Purchasable_TicketClass.purchasable_id == purchasable.id).join(
+            TicketClass, Purchasable_TicketClass.ticketClass_id == TicketClass.id).all()
+
+        assert(ticketClassId in [serialize(tc)[
+               'ticketClass_id'] for tc in ticketClasses])
+
+        ticket = Ticket(
+            isPurchased=False,
+            purchasable_id=purchasableId,
+            ticketClass_id=ticketClassId,
+            user_id=id
+        )
+        db.session.add(ticket)
+        db.session.flush()
+
+        for eventId in request.json.get("events"):
+            event = db.session.query(Event).filter(Event.id == eventId).one()
+            assert(event.purchasable_id == purchasable.id)
+            relationship = Event_Ticket(
+                event_id=eventId,
+                ticket_id=ticket.id
+            )
+            db.session.add(relationship)
+
+        db.session.commit()
+        ticket = db.session.query(Ticket).filter(
+            Ticket.id == ticket.id)\
+            .join(Purchasable, Ticket.purchasable_id == Purchasable.id)\
+            .join(TicketClass, Ticket.ticketClass_id == TicketClass.id)\
+            .join(Event, Event.purchasable_id == Purchasable.id).one()
+        return {**serialize(ticket), "purchasable": {**serialize(ticket.purchasable), "events": [serialize(event) for event in purchasable.events]}, "ticketClass": serialize(ticket.ticketClass)}
+    return "Forbidden", 403
+
+
+# Get user's tickets (cart)
+@app.route("/users/<id>/cart/", methods=['GET'])
+@jwt_required
+def getCart(id):
+    identity = get_jwt_identity()
+    id = int(id)
+    if identity['id'] == id or identity['isAdmin']:
+        tickets = db.session.query(Ticket).filter(Ticket.user_id == id)\
+            .join(Purchasable, Ticket.purchasable_id == Purchasable.id)\
+            .join(TicketClass, Ticket.ticketClass_id == TicketClass.id)\
+            .join(Event, Event.purchasable_id == Purchasable.id).all()
+        return jsonify([{**serialize(ticket), "purchasable": {**serialize(ticket.purchasable), "events": [serialize(event) for event in ticket.purchasable.events]}, "ticketClass": serialize(ticket.ticketClass)} for ticket in tickets])
+    return "Forbidden", 403
+
+# Remove cart item
+@app.route("/users/<id>/cart/<ticketId>/", methods=['DELETE'])
+@jwt_required
+def deleteCartItem(id, ticketId):
+    identity = get_jwt_identity()
+    id = int(id)
+    ticketId = int(ticketId)
+    if identity['id'] == id or identity['isAdmin']:
+        ticket = db.session.query(Ticket).filter(
+            Ticket.id == ticketId, Ticket.user_id == id, Ticket.isPurchased == False).delete()
+        db.session.commit()
+        return "Deleted ticket {}".format(ticketId)
+    return "Forbidden", 403
+
+
+# Get purchasable's tickets
+# ...
 
 
 @app.route('/auth/', methods=['POST'])

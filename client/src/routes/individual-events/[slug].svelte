@@ -11,8 +11,6 @@
 
   import { onMount } from "svelte";
 
-  import { cart } from "../../stores.js";
-
   let event = {};
   const ticketSelection = {};
 
@@ -32,10 +30,8 @@
   });
 
   const addToCart = () => {
-    cart.update(s => [
-      ...s,
-      { ...event, purchasable: { ...event.purchasable, ticketSelection } }
-    ]);
+    // this is where you create tickets with isPurchased=false
+    alert("do something");
   };
 </script>
 
@@ -152,4 +148,3 @@
     <button on:click={addToCart}>Add to cart</button>
   </div>
 </div>
-{JSON.stringify($cart)}
