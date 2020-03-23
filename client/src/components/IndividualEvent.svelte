@@ -58,7 +58,9 @@
       </div>
       <div>
         <div class="eventHeading">
-          <h2>{event.name}</h2>
+          <h2>
+            <a href={`individual-events/${event.id}`}>{event.name}</a>
+          </h2>
           <div>&bull;</div>
           <time datetime={event.startTime}>{event.startTime}</time>
         </div>

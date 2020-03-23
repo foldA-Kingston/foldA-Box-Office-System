@@ -1,4 +1,5 @@
 <script>
+  import { goto } from "@sapper/app";
   import { onMount } from "svelte";
 
   import Panel from "../components/Panel.svelte";
@@ -7,7 +8,7 @@
 
   let cart = [];
 
-  onMount(async () => {
+  const refreshCart = async () => {
     const res = await fetch(`http://localhost:5000/users/${$userId}/cart/`, {
       mode: "cors",
       headers: {
@@ -28,7 +29,11 @@
     } else {
       alert("Something went wrong. Please try again in a moment.");
     }
-  });
+  };
+
+  onMount(refreshCart);
+
+  setTimeout(refreshCart, 3000);
 
   const groupTicketsByClass = tickets => {
     const dict = {};
@@ -48,6 +53,10 @@
 
   const round = num => Math.ceil(num * 100) / 100;
 
+  const buyTickets = () => {
+    goto("/ConfirmPurchase");
+  };
+
   $: subtotal = cart.reduce((a, b) => a + b.ticketPriceSum, 0);
   $: tax = round(subtotal * 0.13);
   $: total = round(subtotal + tax);
@@ -63,12 +72,16 @@
     margin: 0;
   }
 
-  .headingWrapper > button {
+  .headingWrapper > a.button {
     margin-left: 1rem;
   }
 
   .twoColumns {
     display: flex;
+  }
+
+  .purchaseButtonWrapper {
+    margin-top: 1rem;
   }
 </style>
 
@@ -77,22 +90,27 @@
 </svelte:head>
 <div class="headingWrapper">
   <h1>Checkout</h1>
-  <button>Add More</button>
+  <a class="button" href="/">Add More</a>
 </div>
 <!-- <code>{JSON.stringify(cart)}</code> -->
 <div class="twoColumns">
   <Panel title="Cart">
     {#each cart as purchasable}
       {#if purchasable.type == 'individual'}
-        <IndividualCartItem {groupTicketsByClass} {purchasable} />
+        <IndividualCartItem {refreshCart} {groupTicketsByClass} {purchasable} />
       {:else}Day pass{/if}
     {/each}
   </Panel>
   <Panel title="Total">
-    Tickets: ${subtotal}
-    <br />
-    Tax: ${tax}
-    <br />
-    Total: ${total}
+    <div>
+      Tickets: ${subtotal}
+      <br />
+      Tax: ${tax}
+      <br />
+      Total: ${total}
+    </div>
+    <div class="purchaseButtonWrapper">
+      <button on:click={buyTickets}>Buy now</button>
+    </div>
   </Panel>
 </div>

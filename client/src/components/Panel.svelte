@@ -7,7 +7,6 @@
     width: 100%;
     border-radius: 4px;
     border: 1px solid #333;
-    overflow: hidden;
     margin: 1rem 0.5rem;
   }
 
@@ -20,7 +19,6 @@
 
   .panel .content {
     padding: 1rem;
-    
   }
 </style>
 

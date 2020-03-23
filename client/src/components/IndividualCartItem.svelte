@@ -1,6 +1,25 @@
 <script>
   export let purchasable;
   export let groupTicketsByClass;
+  export let refreshCart;
+  import { userId, jwt } from "../stores.js";
+
+  const removeFromCart = () => {
+    fetch(`http://localhost:5000/users/${$userId}/cart/${purchasable.id}/`, {
+      mode: "cors",
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${$jwt}`
+      }
+    }).then(r => {
+      if (r.ok) {
+        refreshCart();
+      } else {
+        alert("Something went wrong. Please try again in a moment.");
+      }
+    });
+  };
 </script>
 
 <style>
@@ -46,17 +65,22 @@
   <div class="imgPlaceholder" />
   <div>
     <div class="cartItemHeading">
-      <h4>{purchasable.name}</h4>
+      <h4>
+        <a href={`/individual-events/${purchasable.events[0].id}`}>
+          {purchasable.name}
+        </a>
+      </h4>
     </div>
+    <!-- {JSON.stringify(purchasable)} -->
     <div class="artistName">{purchasable.artists}</div>
     <div class="priceAndQuantity">
       {#each groupTicketsByClass(purchasable.tickets) as ticket}
-        {ticket.quantity} &times; {ticket.price} – {ticket.ticketClass}
+        {ticket.quantity} &times; ${ticket.price} – {ticket.ticketClass}
         <br />
       {/each}
     </div>
   </div>
   <div class="removeButtonWrapper">
-    <button>Remove</button>
+    <button on:click={removeFromCart}>Remove</button>
   </div>
 </div>

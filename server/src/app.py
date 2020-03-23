@@ -35,12 +35,12 @@ class Event_Ticket(db.Model):
                    autoincrement=True, nullable=False, unique=True)
 
     event_id = db.Column(db.Integer, db.ForeignKey(
-        'Event.id'), nullable=False)
+        'Event.id', ondelete='CASCADE'), nullable=False)
     event = db.relationship(
         'Event', backref='Event_Ticket', lazy="joined")
 
     ticket_id = db.Column(db.Integer, db.ForeignKey(
-        'Ticket.id'), nullable=False)
+        'Ticket.id', ondelete='CASCADE'), nullable=False)
     ticket = db.relationship(
         'Ticket', backref='Event_Ticket', lazy="joined")
 
@@ -595,17 +595,17 @@ def getCart(id):
     return "Forbidden", 403
 
 # Remove cart item
-@app.route("/users/<id>/cart/<ticketId>/", methods=['DELETE'])
+@app.route("/users/<id>/cart/<purchasableId>/", methods=['DELETE'])
 @jwt_required
-def deleteCartItem(id, ticketId):
+def deleteCartItem(id, purchasableId):
     identity = get_jwt_identity()
     id = int(id)
-    ticketId = int(ticketId)
+    purchasableId = int(purchasableId)
     if identity['id'] == id or identity['isAdmin']:
-        ticket = db.session.query(Ticket).filter(
-            Ticket.id == ticketId, Ticket.user_id == id, Ticket.isPurchased == False).delete()
+        tickets = db.session.query(Ticket).filter(
+            Ticket.purchasable_id == purchasableId, Ticket.user_id == id, Ticket.isPurchased == False).delete()
         db.session.commit()
-        return "Deleted ticket {}".format(ticketId)
+        return "Success", 200
     return "Forbidden", 403
 
 

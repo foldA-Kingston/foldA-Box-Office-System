@@ -8,9 +8,9 @@
 
 <script>
   export let slug;
-
+  import { goto } from "@sapper/app";
   import { onMount } from "svelte";
-  import { userId, jwt } from "../../stores.js";
+  import { userId, jwt, isAdmin } from "../../stores.js";
 
   let event = {};
   const ticketSelection = {};
@@ -58,7 +58,8 @@
 
 <style>
   .date,
-  .artist {
+  .artist,
+  .venue {
     padding: 0.2rem 1rem;
   }
   .heading {
@@ -113,6 +114,10 @@
   .description {
     padding: 1rem;
   }
+
+  .deleteEvent {
+    background-color: red;
+  }
 </style>
 
 <svelte:head>
@@ -140,6 +145,10 @@
         <strong>Artist</strong>
         : {event.artistName}
       </div>
+      <div class="venue">
+        <strong>Venue</strong>
+        : {event.venue}
+      </div>
       <div class="description">{event.description}</div>
     </div>
   </div>
@@ -159,7 +168,12 @@
               <td>{tc.description}</td>
               <td>${tc.price}</td>
               <td>
-                <input type="number" bind:value={ticketSelection[tc.id]} />
+                <input
+                  type="number"
+                  bind:value={ticketSelection[tc.id]}
+                  on:change={() => {
+                    ticketSelection = ticketSelection;
+                  }} />
               </td>
             </tr>
           {/each}
@@ -169,3 +183,7 @@
     <button on:click={addToCart}>Add to cart</button>
   </div>
 </div>
+{#if isAdmin}
+  <button>Edit event</button>
+  <button class="deleteEvent">Delete event</button>
+{/if}
