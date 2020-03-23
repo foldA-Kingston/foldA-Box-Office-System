@@ -10,6 +10,7 @@
   export let slug;
 
   import { onMount } from "svelte";
+  import { userId, jwt } from "../../stores.js";
 
   let event = {};
   const ticketSelection = {};
@@ -29,9 +30,29 @@
     }
   });
 
-  const addToCart = () => {
-    // this is where you create tickets with isPurchased=false
-    alert("do something");
+  $: addToCart = () => {
+    Object.keys(ticketSelection).forEach(ticketClassId => {
+      fetch(`http://localhost:5000/users/${$userId}/cart/`, {
+        mode: "cors",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${$jwt}`
+        },
+        body: JSON.stringify({
+          purchasableId: event.purchasable.id,
+          ticketClassId: Number(ticketClassId),
+          quantity: ticketSelection[ticketClassId],
+          events: [event.id]
+        })
+      }).then(r => {
+        if (r.ok) {
+          goto(`/Cart`);
+        } else {
+          alert("Something went wrong. Please try again in a moment.");
+        }
+      });
+    });
   };
 </script>
 

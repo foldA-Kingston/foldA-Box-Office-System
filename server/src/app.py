@@ -517,6 +517,7 @@ def createTicketClass():
     else:
         return "Forbidden", 403
 
+
 # Get ticketClasses
 @app.route("/ticketClasses/", methods=['GET'])
 def getTicketClasss():
@@ -542,46 +543,55 @@ def addToCart(id):
         assert(ticketClassId in [serialize(tc)[
                'ticketClass_id'] for tc in ticketClasses])
 
-        ticket = Ticket(
-            isPurchased=False,
-            purchasable_id=purchasableId,
-            ticketClass_id=ticketClassId,
-            user_id=id
-        )
-        db.session.add(ticket)
-        db.session.flush()
-
-        for eventId in request.json.get("events"):
-            event = db.session.query(Event).filter(Event.id == eventId).one()
-            assert(event.purchasable_id == purchasable.id)
-            relationship = Event_Ticket(
-                event_id=eventId,
-                ticket_id=ticket.id
+        for i in range(request.json.get("quantity")):
+            ticket = Ticket(
+                isPurchased=False,
+                purchasable_id=purchasableId,
+                ticketClass_id=ticketClassId,
+                user_id=id
             )
-            db.session.add(relationship)
+            db.session.add(ticket)
+            db.session.flush()
 
+            for eventId in request.json.get("events"):
+                event = db.session.query(Event).filter(
+                    Event.id == eventId).one()
+                assert(event.purchasable_id == purchasable.id)
+                relationship = Event_Ticket(
+                    event_id=eventId,
+                    ticket_id=ticket.id
+                )
+                db.session.add(relationship)
         db.session.commit()
-        ticket = db.session.query(Ticket).filter(
-            Ticket.id == ticket.id)\
-            .join(Purchasable, Ticket.purchasable_id == Purchasable.id)\
-            .join(TicketClass, Ticket.ticketClass_id == TicketClass.id)\
-            .join(Event, Event.purchasable_id == Purchasable.id).one()
-        return {**serialize(ticket), "purchasable": {**serialize(ticket.purchasable), "events": [serialize(event) for event in purchasable.events]}, "ticketClass": serialize(ticket.ticketClass)}
+        return "Success", 200
     return "Forbidden", 403
 
 
 # Get user's tickets (cart)
+# @app.route("/users/<id>/cart/", methods=['GET'])
+# @jwt_required
+# def getCart(id):
+#     identity = get_jwt_identity()
+#     id = int(id)
+#     if identity['id'] == id or identity['isAdmin']:
+#         tickets = db.session.query(Ticket).filter(Ticket.user_id == id)\
+#             .join(Purchasable, Ticket.purchasable_id == Purchasable.id)\
+#             .join(TicketClass, Ticket.ticketClass_id == TicketClass.id)\
+#             .join(Event, Event.purchasable_id == Purchasable.id).all()
+#         return jsonify([{**serialize(ticket), "purchasable": {**serialize(ticket.purchasable), "events": [serialize(event) for event in ticket.purchasable.events]}, "ticketClass": serialize(ticket.ticketClass)} for ticket in tickets])
+#     return "Forbidden", 403
+
 @app.route("/users/<id>/cart/", methods=['GET'])
 @jwt_required
 def getCart(id):
     identity = get_jwt_identity()
     id = int(id)
     if identity['id'] == id or identity['isAdmin']:
-        tickets = db.session.query(Ticket).filter(Ticket.user_id == id)\
-            .join(Purchasable, Ticket.purchasable_id == Purchasable.id)\
-            .join(TicketClass, Ticket.ticketClass_id == TicketClass.id)\
-            .join(Event, Event.purchasable_id == Purchasable.id).all()
-        return jsonify([{**serialize(ticket), "purchasable": {**serialize(ticket.purchasable), "events": [serialize(event) for event in ticket.purchasable.events]}, "ticketClass": serialize(ticket.ticketClass)} for ticket in tickets])
+        purchasables = db.session.query(Purchasable).join(
+            Ticket, Ticket.purchasable_id == Purchasable.id).join(TicketClass, TicketClass.id == Ticket.ticketClass_id).filter(Ticket.user_id == id)
+        return jsonify([{**serialize(purchasable),
+                         "events": [serialize(event) for event in purchasable.events],
+                         "tickets": [{**serialize(ticket), "ticketClass": serialize(ticket.ticketClass)} for ticket in purchasable.tickets]} for purchasable in purchasables])
     return "Forbidden", 403
 
 # Remove cart item

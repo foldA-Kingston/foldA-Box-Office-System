@@ -1,24 +1,56 @@
-
 <script>
+  import { onMount } from "svelte";
 
   import Panel from "../components/Panel.svelte";
+  import IndividualCartItem from "../components/IndividualCartItem.svelte";
+  import { userId, jwt } from "../stores.js";
 
-  let cart = [
-    {
-      name: "Event name",
-      artist: "John Smith",
-      quantity: 2,
-      pricePerTicket: 12.5,
-      date: "2020-04-04"
-    },
-    {
-      name: "Fun weekend pass",
-      artist: "Multiple",
-      quantity: 4,
-      pricePerTicket: 6,
-      date: "2020-02-02"
+  let cart = [];
+
+  onMount(async () => {
+    const res = await fetch(`http://localhost:5000/users/${$userId}/cart/`, {
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${$jwt}`
+      }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      cart = data.map(purchasable => ({
+        ...purchasable,
+        artists: purchasable.events.map(event => event.artistName).join(", "),
+        ticketPriceSum: purchasable.tickets.reduce(
+          (a, b) => a + b.ticketClass.price,
+          0
+        )
+      }));
+    } else {
+      alert("Something went wrong. Please try again in a moment.");
     }
-  ]; // TODO: fetch this from the server
+  });
+
+  const groupTicketsByClass = tickets => {
+    const dict = {};
+    tickets.forEach(t => {
+      if (dict.hasOwnProperty(t.ticketClass_id)) {
+        dict[t.ticketClass_id].quantity += 1;
+      } else {
+        dict[t.ticketClass_id] = {
+          quantity: 1,
+          price: t.ticketClass.price,
+          ticketClass: t.ticketClass.description
+        };
+      }
+    });
+    return Object.keys(dict).map(key => dict[key]);
+  };
+
+  const round = num => Math.ceil(num * 100) / 100;
+
+  $: subtotal = cart.reduce((a, b) => a + b.ticketPriceSum, 0);
+  $: tax = round(subtotal * 0.13);
+  $: total = round(subtotal + tax);
 </script>
 
 <style>
@@ -38,49 +70,6 @@
   .twoColumns {
     display: flex;
   }
-
-  .cartItem {
-    display: flex;
-    margin: 1rem 0;
-    align-items: center;
-  }
-
-  .cartItem .imgPlaceholder {
-    height: 5rem;
-    width: 5rem;
-    border-radius: 50%;
-    border: 2px solid #555;
-    background-color: var(--offwhite);
-    margin-right: 1rem;
-  }
-
-  .cartItemHeading {
-    display: flex;
-    font-size: 1.4rem;
-    align-items: center;
-  }
-  .cartItemHeading h4 {
-    margin: 0;
-    padding: 0;
-    font-weight: bold;
-    text-decoration: underline;
-  }
-
-  .cartItemHeading time {
-    margin: 0;
-    padding: 0;
-    margin-left: 1rem;
-  }
-
-  .artistName {
-    font-style: italic;
-  }
-  .removeButtonWrapper {
-    margin-left: 1.5rem;
-    display: flex;
-    justify-content: flex-end;
-    flex-grow: 1;
-  }
 </style>
 
 <svelte:head>
@@ -90,33 +79,20 @@
   <h1>Checkout</h1>
   <button>Add More</button>
 </div>
-
+<!-- <code>{JSON.stringify(cart)}</code> -->
 <div class="twoColumns">
   <Panel title="Cart">
-    {#each cart as item}
-      <div class="cartItem">
-        <div class="imgPlaceholder" />
-        <div>
-          <div class="cartItemHeading">
-            <h4>{item.name}</h4>
-            <time datetime={item.date}>{item.date}</time>
-          </div>
-          <div class="artistName">{item.artist}</div>
-          <div class="priceAndQuantity">
-            {item.quantity} &times; ${item.pricePerTicket}
-          </div>
-        </div>
-        <div class="removeButtonWrapper">
-          <button>Remove</button>
-        </div>
-      </div>
+    {#each cart as purchasable}
+      {#if purchasable.type == 'individual'}
+        <IndividualCartItem {groupTicketsByClass} {purchasable} />
+      {:else}Day pass{/if}
     {/each}
   </Panel>
   <Panel title="Total">
-    Tickets: ${cart.map(x => x.pricePerTicket * x.quantity).reduce((a, b) => a + b, 0)}
+    Tickets: ${subtotal}
     <br />
-    Tax: $$$
+    Tax: ${tax}
     <br />
-    Total: $$$
+    Total: ${total}
   </Panel>
 </div>
