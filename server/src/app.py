@@ -17,6 +17,7 @@ app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://rqkxpfbo:Rpk8w646Zf5pIide1L9KP-_p4ElwNFsw@rajje.db.elephantsql.com:5432/rqkxpfbo'
 
 app.config['JWT_SECRET_KEY'] = 'super-secret'  # TODO: Change this
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False
 
 CORS(app)
 
@@ -421,6 +422,14 @@ def createDayPass():
             name=request.json.get("name")
         )
         db.session.add(purchasable)
+        db.session.flush()
+
+        ticketClasses = request.json['ticketClasses']
+        for tc_id in ticketClasses:
+            relationship = Purchasable_TicketClass(
+                purchasable_id=purchasable.id, ticketClass_id=tc_id)
+            db.session.add(relationship)
+
         db.session.commit()
         purchasable = db.session.query(Purchasable).filter(
             Purchasable.id == purchasable.id).one()

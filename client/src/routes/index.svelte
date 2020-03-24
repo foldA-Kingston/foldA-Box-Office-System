@@ -36,7 +36,7 @@
 {#if $isAdmin}
   <div>
     <a class="button" href="NewIndividualEvent">New single event</a>
-    <a class="button" href="NewIndividualEvent">New day pass</a>
+    <a class="button" href="NewDayPass">New day pass</a>
   </div>
 {/if}
 <div class="events">

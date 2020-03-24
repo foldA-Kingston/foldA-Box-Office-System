@@ -106,7 +106,6 @@
 
 <style>
   .panel {
-    width: 40%;
     border-radius: 4px;
     border: 1px solid #333;
     margin: 1rem 0.5rem;
