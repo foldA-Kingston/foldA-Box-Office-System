@@ -4,6 +4,7 @@
 
   import Panel from "../components/Panel.svelte";
   import IndividualCartItem from "../components/IndividualCartItem.svelte";
+  import DayPassCartItem from "../components/DayPassCartItem.svelte";
   import { userId, jwt } from "../stores.js";
 
   let cart = [];
@@ -75,11 +76,6 @@
   .headingWrapper > a.button {
     margin-left: 1rem;
   }
-
-  .twoColumns {
-    display: flex;
-  }
-
   .purchaseButtonWrapper {
     margin-top: 1rem;
   }
@@ -93,24 +89,24 @@
   <a class="button" href="/">Add More</a>
 </div>
 <!-- <code>{JSON.stringify(cart)}</code> -->
-<div class="twoColumns">
-  <Panel title="Cart">
-    {#each cart as purchasable}
-      {#if purchasable.type == 'individual'}
-        <IndividualCartItem {refreshCart} {groupTicketsByClass} {purchasable} />
-      {:else}Day pass{/if}
-    {/each}
-  </Panel>
-  <Panel title="Total">
-    <div>
-      Tickets: ${subtotal}
-      <br />
-      Tax: ${tax}
-      <br />
-      Total: ${total}
-    </div>
-    <div class="purchaseButtonWrapper">
-      <button on:click={buyTickets}>Buy now</button>
-    </div>
-  </Panel>
-</div>
+<Panel title="Cart">
+  {#each cart as purchasable}
+    {#if purchasable.type == 'individual'}
+      <IndividualCartItem {refreshCart} {groupTicketsByClass} {purchasable} />
+    {:else}
+      <DayPassCartItem {refreshCart} {groupTicketsByClass} {purchasable} />
+    {/if}
+  {/each}
+</Panel>
+<Panel title="Total">
+  <div>
+    Tickets: ${subtotal}
+    <br />
+    Tax: ${tax}
+    <br />
+    Total: ${total}
+  </div>
+  <div class="purchaseButtonWrapper">
+    <button on:click={buyTickets}>Buy now</button>
+  </div>
+</Panel>

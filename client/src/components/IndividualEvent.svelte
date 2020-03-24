@@ -1,4 +1,5 @@
 <script>
+  import { formatDate } from "../utils.js";
   import Panel from "./Panel.svelte";
   export let purchasable;
   let event = purchasable.events[0];
@@ -62,7 +63,7 @@
             <a href={`individual-events/${event.id}`}>{event.name}</a>
           </h2>
           <div>&bull;</div>
-          <time datetime={event.startTime}>{event.startTime}</time>
+          <time datetime={event.startTime}>{formatDate(event.startTime)}</time>
         </div>
         <div class="artistName">{event.artistName}</div>
         <div>{event.description}</div>

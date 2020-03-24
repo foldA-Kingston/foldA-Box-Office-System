@@ -2,6 +2,7 @@
   import { goto } from "@sapper/app";
   import { onMount, onDestroy } from "svelte";
   import { jwt } from "../stores.js";
+  import { formatDate } from "../utils.js";
   import Flatpickr from "svelte-flatpickr";
   import Select from "svelte-select";
 
@@ -274,7 +275,7 @@
               <td>{event.name}</td>
               <td>{event.description}</td>
               <td>{event.artistName}</td>
-              <td>{event.startTime}</td>
+              <td>{formatDate(event.startTime)}</td>
               <td>{event.endTime}</td>
               <td>{event.venue}</td>
               <td>{event.capacity}</td>

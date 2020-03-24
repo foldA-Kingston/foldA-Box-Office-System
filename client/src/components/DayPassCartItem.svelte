@@ -21,8 +21,6 @@
       }
     });
   };
-
-  const event = purchasable.events[0];
 </script>
 
 <style>
@@ -43,10 +41,17 @@
 
   .cartItemHeading {
     display: flex;
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     align-items: center;
   }
-  .cartItemHeading h4 {
+
+  h4 {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-top: 0.8rem;
+  }
+
+  .cartItemHeading h3 {
     margin: 0;
     padding: 0;
     font-weight: bold;
@@ -61,33 +66,78 @@
     justify-content: flex-end;
     flex-grow: 1;
   }
+
+  table.eventsList {
+    width: 100%;
+  }
+
+  table.eventsList td,
+  table.eventsList th {
+    padding: 0.2rem;
+    text-align: center;
+  }
+
+  .schedule {
+    border: 1px solid #ddd;
+    background-color: #fafafa;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin: 1rem;
+  }
+
+  .schedule strong {
+    font-size: 1.1rem;
+  }
 </style>
 
 <div class="cartItem">
   <div class="imgPlaceholder" />
   <div>
     <div class="cartItemHeading">
-      <h4>
-        Individual event:
-        <a href={`/individual-events/${purchasable.events[0].id}`}>
+      <h3>
+        Day pass:
+        <a href={`/day-passes/${purchasable.events[0].id}`}>
           {purchasable.name}
         </a>
-      </h4>
+      </h3>
     </div>
     <!-- {JSON.stringify(purchasable)} -->
     <div class="artistName">{purchasable.artists}</div>
-    <div class="startEnd">
-      <strong>Start:</strong>
-      {formatDate(event.startTime)}
-      <br />
-      <strong>End:</strong>
-      {formatDate(event.endTime)}
-      <br />
-    </div>
     <div class="priceAndQuantity">
       {#each groupTicketsByClass(purchasable.tickets) as ticket}
         {ticket.quantity} &times; ${ticket.price} – {ticket.ticketClass}
         <br />
+      {/each}
+    </div>
+    <div>
+      <h4>Schedules:</h4>
+      {#each purchasable.tickets as ticket}
+        <div class="schedule">
+          <strong>
+            ${ticket.ticketClass.price} – {ticket.ticketClass.description}
+          </strong>
+          <br />
+          <table class="eventsList">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Venue</th>
+                <th>Start</th>
+                <th>End</th>
+              </tr>
+            </thead>
+            <tbody>
+              {#each ticket.events as event}
+                <tr>
+                  <td>{event.name}</td>
+                  <td>{event.venue}</td>
+                  <td>{formatDate(event.startTime)}</td>
+                  <td>{formatDate(event.endTime)}</td>
+                </tr>
+              {/each}
+            </tbody>
+          </table>
+        </div>
       {/each}
     </div>
   </div>

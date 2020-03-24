@@ -1,4 +1,5 @@
 <script>
+  import { formatDate } from "../utils.js";
   import Panel from "./Panel.svelte";
   export let purchasable;
   let events = purchasable.events;
@@ -40,8 +41,12 @@
   }
 
   .artistName {
-    margin-bottom: 0.75rem;
     font-style: italic;
+  }
+
+  .desc,
+  .artistName {
+    margin-bottom: 0.75rem;
   }
 
   .buttonWrapper {
@@ -50,24 +55,30 @@
   }
 </style>
 
-<Panel title={`Day pass: ${purchasable.description}`}>
+<Panel title={`Day pass: ${purchasable.name}`}>
   <div class="panelContent">
     <div class="thumbnail">
-      <img src="event2.png" alt={purchasable.description} />
+      <img src="event2.png" alt={purchasable.name} />
     </div>
     <div>
       <div class="eventHeading">
-        <h2>{purchasable.description}</h2>
+        <h2>
+          <a href={`day-passes/${purchasable.id}`}>{purchasable.name}</a>
+        </h2>
         <div>&bull;</div>
-        <time datetime={purchasable.startTime}>{purchasable.startTime}</time>
+        First event at&nbsp;
+        <time datetime={purchasable.startTime}>
+          {formatDate(purchasable.startTime)}
+        </time>
       </div>
       <div class="artistName">
         Artists: {[...new Set(events.map(e => e.artistName))].join(', ')}
       </div>
-      <div>Includes {events.length} events</div>
+      <div class="desc">{purchasable.description}</div>
+      <div class="desc">Includes {events.length} events</div>
     </div>
     <div class="buttonWrapper">
-      <a class="button" href="/todo">Buy Day Pass</a>
+      <a class="button" href={`/day-passes/${purchasable.id}`}>Buy Tickets</a>
     </div>
   </div>
 </Panel>

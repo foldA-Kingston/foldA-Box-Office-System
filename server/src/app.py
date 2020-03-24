@@ -132,6 +132,9 @@ class Ticket(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('User.id'), nullable=False)
     user = db.relationship('User', backref='Ticket')
 
+    events = db.relationship(
+        'Event_Ticket', backref='Ticket', lazy="joined")
+
 
 class TicketClass(db.Model):
     __tablename__ = 'TicketClass'
@@ -597,10 +600,10 @@ def getCart(id):
     id = int(id)
     if identity['id'] == id or identity['isAdmin']:
         purchasables = db.session.query(Purchasable).join(
-            Ticket, Ticket.purchasable_id == Purchasable.id).join(TicketClass, TicketClass.id == Ticket.ticketClass_id).filter(Ticket.user_id == id)
+            Ticket, Ticket.purchasable_id == Purchasable.id).join(TicketClass, TicketClass.id == Ticket.ticketClass_id).join(Event_Ticket, Ticket.id == Event_Ticket.ticket_id).join(Event, Event_Ticket.event_id == Event.id).filter(Ticket.user_id == id)
         return jsonify([{**serialize(purchasable),
                          "events": [serialize(event) for event in purchasable.events],
-                         "tickets": [{**serialize(ticket), "ticketClass": serialize(ticket.ticketClass)} for ticket in purchasable.tickets]} for purchasable in purchasables])
+                         "tickets": [{**serialize(ticket), "ticketClass": serialize(ticket.ticketClass), "events": [serialize(event.event) for event in ticket.events]} for ticket in purchasable.tickets]} for purchasable in purchasables])
     return "Forbidden", 403
 
 # Remove cart item

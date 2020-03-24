@@ -11,6 +11,7 @@
   import { goto } from "@sapper/app";
   import { onMount } from "svelte";
   import { userId, jwt, isAdmin } from "../../stores.js";
+  import { formatDate } from "../../utils.js";
 
   let event = {};
   const ticketSelection = {};
@@ -139,7 +140,7 @@
     <div class="panelText">
       <div class="date">
         <strong>Date</strong>
-        : {event.startTime}
+        : {event.startTime && formatDate(event.startTime)}
       </div>
       <div class="artist">
         <strong>Artist</strong>
