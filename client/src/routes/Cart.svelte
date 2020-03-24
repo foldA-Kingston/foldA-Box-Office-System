@@ -8,6 +8,9 @@
   import { userId, jwt } from "../stores.js";
 
   let cart = [];
+  let subtotal = 0;
+  let tax = 0;
+  let total = 0;
 
   const refreshCart = async () => {
     const res = await fetch(`http://localhost:5000/users/${$userId}/cart/`, {
@@ -19,7 +22,7 @@
     });
     if (res.ok) {
       const data = await res.json();
-      cart = data.map(purchasable => ({
+      cart = data.purchasables.map(purchasable => ({
         ...purchasable,
         artists: purchasable.events.map(event => event.artistName).join(", "),
         ticketPriceSum: purchasable.tickets.reduce(
@@ -27,6 +30,9 @@
           0
         )
       }));
+      subtotal = data.ticketSubTotal;
+      tax = data.tax;
+      total = data.totalPrice;
     } else {
       alert("Something went wrong. Please try again in a moment.");
     }
@@ -57,10 +63,6 @@
   const buyTickets = () => {
     goto("/ConfirmPurchase");
   };
-
-  $: subtotal = cart.reduce((a, b) => a + b.ticketPriceSum, 0);
-  $: tax = round(subtotal * 0.13);
-  $: total = round(subtotal + tax);
 </script>
 
 <style>

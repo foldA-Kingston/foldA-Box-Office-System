@@ -9,6 +9,13 @@ from flask_jwt_extended import (
 import enum
 import bcrypt
 from flask_cors import CORS
+from square.client import Client
+from os import urandom
+from base64 import b64encode
+
+square = Client(
+    access_token='EAAAEDptou3ubWRO3GTh2JflqNQDJhCUBZzkfAUCk_C1tqMD3X8EBH92jatDxUb1',
+    environment="sandbox")
 
 app = Flask(__name__)
 
@@ -600,10 +607,14 @@ def getCart(id):
     id = int(id)
     if identity['id'] == id or identity['isAdmin']:
         purchasables = db.session.query(Purchasable).join(
-            Ticket, Ticket.purchasable_id == Purchasable.id).join(TicketClass, TicketClass.id == Ticket.ticketClass_id).join(Event_Ticket, Ticket.id == Event_Ticket.ticket_id).join(Event, Event_Ticket.event_id == Event.id).filter(Ticket.user_id == id)
-        return jsonify([{**serialize(purchasable),
-                         "events": [serialize(event) for event in purchasable.events],
-                         "tickets": [{**serialize(ticket), "ticketClass": serialize(ticket.ticketClass), "events": [serialize(event.event) for event in ticket.events]} for ticket in purchasable.tickets]} for purchasable in purchasables])
+            Ticket, Ticket.purchasable_id == Purchasable.id).join(TicketClass, TicketClass.id == Ticket.ticketClass_id).join(Event_Ticket, Ticket.id == Event_Ticket.ticket_id).join(Event, Event_Ticket.event_id == Event.id).filter(Ticket.user_id == id, Ticket.isPurchased == False)
+        ticketSubTotal = sum([sum([ticket.ticketClass.price for ticket in purchasable.tickets])
+                              for purchasable in purchasables])
+        tax = 0.13 * ticketSubTotal
+        totalPrice = ticketSubTotal + tax
+        return jsonify({"ticketSubTotal": ticketSubTotal, "tax": tax, "totalPrice": totalPrice, "purchasables": [{**serialize(purchasable),
+                                                                                                                  "events": [serialize(event) for event in purchasable.events],
+                                                                                                                  "tickets": [{**serialize(ticket), "ticketClass": serialize(ticket.ticketClass), "events": [serialize(event.event) for event in ticket.events]} for ticket in purchasable.tickets]} for purchasable in purchasables]})
     return "Forbidden", 403
 
 # Remove cart item
@@ -621,8 +632,45 @@ def deleteCartItem(id, purchasableId):
     return "Forbidden", 403
 
 
-# Get purchasable's tickets
-# ...
+# Checkout
+@app.route("/checkout/", methods=['POST'])
+@jwt_required
+def checkout():
+    identity = get_jwt_identity()
+    idempotency_key = b64encode(urandom(32)).decode('utf-8')
+    nonce = request.json.get("nonce", None)
+
+    tickets = db.session.query(Ticket).filter(Ticket.user_id == identity['id']).join(TicketClass, Ticket.ticketClass_id == TicketClass.id).join(
+        Event_Ticket, Event_Ticket.ticket_id == Ticket.id).join(Event, Event_Ticket.event_id == Event.id).all()
+
+    totalPrice = sum([ticket.ticketClass.price for ticket in tickets])
+
+    description = "{} tickets purchased".format(len(tickets))
+
+    print(idempotency_key)
+    print(nonce)
+    if nonce:
+        body = {
+            "source_id": nonce,
+            "amount_money": {
+                "amount": totalPrice * 100,  # unit is 0.01 CAD
+                "currency": 'CAD'
+            },
+            "idempotency_key": idempotency_key,
+            "customer_id": str(identity['id']),
+            "buyer_email_address": identity['emailAddress'],
+            "statement_description_identifier": description
+        }
+        try:
+            r = square.payments.create_payment(body)
+            for ticket in db.session.query(Ticket).filter(Ticket.user_id == identity['id']).all():
+                ticket.isPurchased = True
+            db.session.commit()
+            return r.text
+        except Exception as e:
+            return e, 500
+
+    return "Error", 400
 
 
 @app.route('/auth/', methods=['POST'])
