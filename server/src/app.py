@@ -493,6 +493,22 @@ def updatePurchasable(id):
         purchasable.numTickets = request.json.get("numTickets")
         purchasable.description = request.json.get("description")
         purchasable.name = request.json.get("name")
+
+        ticketClasses = request.json['ticketClasses']
+        currentTicketClasses = [rel.ticketClass_id for rel in db.session.query(
+            Purchasable_TicketClass).filter(Purchasable_TicketClass.purchasable_id == purchasable.id).all()]
+
+        for tc_id in ticketClasses:  # add new ticketClasses
+            if (tc_id not in currentTicketClasses):
+                relationship = Purchasable_TicketClass(
+                    purchasable_id=purchasable.id, ticketClass_id=tc_id)
+                db.session.add(relationship)
+
+        for tc_id in currentTicketClasses:  # remove old ticketClasses
+            if tc_id not in ticketClasses:
+                db.session.query(Purchasable_TicketClass).filter(Purchasable_TicketClass.purchasable_id == purchasable.id).filter(
+                    Purchasable_TicketClass.ticketClass_id == tc_id).delete()
+
         db.session.commit()
         return serialize(purchasable)
     return "Forbidden", 403
@@ -586,20 +602,6 @@ def addToCart(id):
     return "Forbidden", 403
 
 
-# Get user's tickets (cart)
-# @app.route("/users/<id>/cart/", methods=['GET'])
-# @jwt_required
-# def getCart(id):
-#     identity = get_jwt_identity()
-#     id = int(id)
-#     if identity['id'] == id or identity['isAdmin']:
-#         tickets = db.session.query(Ticket).filter(Ticket.user_id == id)\
-#             .join(Purchasable, Ticket.purchasable_id == Purchasable.id)\
-#             .join(TicketClass, Ticket.ticketClass_id == TicketClass.id)\
-#             .join(Event, Event.purchasable_id == Purchasable.id).all()
-#         return jsonify([{**serialize(ticket), "purchasable": {**serialize(ticket.purchasable), "events": [serialize(event) for event in ticket.purchasable.events]}, "ticketClass": serialize(ticket.ticketClass)} for ticket in tickets])
-#     return "Forbidden", 403
-
 @app.route("/users/<id>/cart/", methods=['GET'])
 @jwt_required
 def getCart(id):
@@ -647,8 +649,6 @@ def checkout():
 
     description = "{} tickets purchased".format(len(tickets))
 
-    print(idempotency_key)
-    print(nonce)
     if nonce:
         body = {
             "source_id": nonce,

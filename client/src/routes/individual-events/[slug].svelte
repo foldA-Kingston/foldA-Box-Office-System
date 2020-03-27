@@ -185,6 +185,6 @@
   </div>
 </div>
 {#if isAdmin}
-  <button>Edit event</button>
+  <a class="button" href={`/edit-event/${event.id}`}>Edit event</a>
   <button class="deleteEvent">Delete event</button>
 {/if}

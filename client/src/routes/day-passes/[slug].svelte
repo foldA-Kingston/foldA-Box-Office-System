@@ -162,10 +162,10 @@
 </svelte:head>
 <h1 class="heading">{purchasable.name}</h1>
 {#if isAdmin}
-  <button>Edit day pass</button>
+  <a class="button" href={`/edit-day-pass/${purchasable.id}`}>Edit day pass</a>
   <button class="deleteDayPass">Delete day pass</button>
 {/if}
-<Panel title={purchasable.name}>
+<Panel title="Details">
   <div class="description">{purchasable.description}</div>
 </Panel>
 <Panel title="Select tickets">
