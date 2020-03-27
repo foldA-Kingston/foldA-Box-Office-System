@@ -39,7 +39,9 @@
 
   $: conflictsWithSelection = (start, end) =>
     selectedEvents.some(
-      event => start <= event.endTime && end >= event.startTime
+      event =>
+        new Date(start) <= new Date(event.endTime) &&
+        new Date(end) >= new Date(event.startTime)
     );
 
   $: addToCart = () => {
@@ -122,7 +124,6 @@
 
   .dayEventHeading {
     display: flex;
-    font-size: 1.4rem;
     align-items: center;
   }
   .dayEventHeading h4 {
@@ -130,6 +131,7 @@
     padding: 0;
     font-weight: bold;
     text-decoration: underline;
+    font-size: 1.4rem;
   }
 
   .dayEventHeading time {
