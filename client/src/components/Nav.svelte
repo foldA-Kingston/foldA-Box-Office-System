@@ -65,6 +65,9 @@
       <a class:selected={segment === 'DayPasses'} href="DayPasses">DayPasses</a>
     </li>
     <li>
+      <a class:selected={segment === 'Accessibility'} href="Accessibility">Accessibility</a>
+    </li>
+    <li>
       <a class:selected={segment === 'Cart'} href="Cart">Cart</a>
     </li>
     <li>
