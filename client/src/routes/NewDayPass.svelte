@@ -276,7 +276,7 @@
               <td>{event.description}</td>
               <td>{event.artistName}</td>
               <td>{formatDate(event.startTime)}</td>
-              <td>{event.endTime}</td>
+              <td>{formatDate(event.endTime)}</td>
               <td>{event.venue}</td>
               <td>{event.capacity}</td>
             </tr>

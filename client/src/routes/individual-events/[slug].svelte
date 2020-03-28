@@ -55,6 +55,18 @@
       });
     });
   };
+
+  $: deleteEvent = async () => {
+    await fetch(`http://localhost:5000/purchasables/${event.purchasable_id}/`, {
+      mode: "cors",
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${$jwt}`
+      }
+    });
+    goto("/");
+  };
 </script>
 
 <style>
@@ -186,5 +198,5 @@
 </div>
 {#if isAdmin}
   <a class="button" href={`/edit-event/${event.id}`}>Edit event</a>
-  <button class="deleteEvent">Delete event</button>
+  <button on:click={deleteEvent} class="deleteEvent">Delete event</button>
 {/if}
