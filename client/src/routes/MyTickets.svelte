@@ -7,22 +7,25 @@
   import DayPassCartItem from "../components/DayPassCartItem.svelte";
   import { userId, jwt } from "../stores.js";
 
-  let cart = [];
+  let purchased = [];
   let subtotal = 0;
   let tax = 0;
   let total = 0;
 
   const refreshCart = async () => {
-    const res = await fetch(`http://localhost:5000/users/${$userId}/cart/`, {
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${$jwt}`
+    const res = await fetch(
+      `http://localhost:5000/users/${$userId}/purchased/`,
+      {
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${$jwt}`
+        }
       }
-    });
+    );
     if (res.ok) {
       const data = await res.json();
-      cart = data.purchasables.map(purchasable => ({
+      purchased = data.purchasables.map(purchasable => ({
         ...purchasable,
         artists: purchasable.events.map(event => event.artistName).join(", "),
         ticketPriceSum: purchasable.tickets.reduce(
@@ -59,6 +62,10 @@
   };
 
   const round = num => Math.ceil(num * 100) / 100;
+
+  const buyTickets = () => {
+    goto("/ConfirmPurchase");
+  };
 </script>
 
 <style>
@@ -70,42 +77,34 @@
   .headingWrapper > * {
     margin: 0;
   }
-
-  .headingWrapper > a.button {
-    margin-left: 1rem;
-  }
-  .purchaseButtonWrapper {
-    margin-top: 1rem;
-  }
 </style>
 
 <svelte:head>
   <title>Cart</title>
 </svelte:head>
 <div class="headingWrapper">
-  <h1>Checkout</h1>
-  <a class="button" href="/">Add More</a>
+  <h1>Purchased Tickets</h1>
 </div>
-<!-- <code>{JSON.stringify(cart)}</code> -->
+<!-- <code>{JSON.stringify(purchased)}</code> -->
 <Panel title="Cart">
-  {#each cart as purchasable}
+  {#each purchased as purchasable}
     {#if purchasable.type == 'individual'}
-      <IndividualCartItem {refreshCart} {groupTicketsByClass} {purchasable} />
+      <IndividualCartItem
+        purchased
+        {refreshCart}
+        {groupTicketsByClass}
+        {purchasable} />
     {:else}
-      <DayPassCartItem {refreshCart} {groupTicketsByClass} {purchasable} />
+      <DayPassCartItem
+        purchased
+        {refreshCart}
+        {groupTicketsByClass}
+        {purchasable} />
     {/if}
   {/each}
-  {#if !cart.length}No tickets selected{/if}
-</Panel>
-<Panel title="Total">
-  <div>
-    Tickets: ${subtotal}
-    <br />
-    Tax: ${tax}
-    <br />
-    Total: ${total}
-  </div>
-  <div class="purchaseButtonWrapper">
-    <a class="button" href="/ConfirmPurchase">Buy now</a>
-  </div>
+  {#if !purchased.length}
+    No tickets yet!
+    <a href="/">Browse events here</a>
+    .
+  {/if}
 </Panel>

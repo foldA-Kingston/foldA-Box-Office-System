@@ -1,4 +1,5 @@
 <script>
+  export let purchased;
   export let purchasable;
   export let groupTicketsByClass;
   export let refreshCart;
@@ -139,7 +140,9 @@
       {/each}
     </div>
   </div>
-  <div class="removeButtonWrapper">
-    <button on:click={removeFromCart}>Remove</button>
-  </div>
+  {#if !purchased}
+    <div class="removeButtonWrapper">
+      <button on:click={removeFromCart}>Remove</button>
+    </div>
+  {/if}
 </div>
