@@ -96,9 +96,7 @@
     <div class="cartItemHeading">
       <h3>
         Day pass:
-        <a href={`/day-passes/${purchasable.events[0].id}`}>
-          {purchasable.name}
-        </a>
+        <a href={`/day-passes/${purchasable.id}`}>{purchasable.name}</a>
       </h3>
     </div>
     <!-- {JSON.stringify(purchasable)} -->

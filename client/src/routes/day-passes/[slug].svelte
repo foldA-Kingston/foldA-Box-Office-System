@@ -17,7 +17,7 @@
   let purchasable = {};
   let events = [];
 
-  onMount(async () => {
+  const getPurchasable = async () => {
     const res = await fetch(`http://localhost:5000/purchasables/${slug}/`, {
       mode: "cors",
       headers: {
@@ -31,6 +31,10 @@
         ticketSelection[tc.id] = 0;
       });
     }
+  };
+
+  onMount(() => {
+    getPurchasable();
   });
 
   let selectedEvents = [];
@@ -67,6 +71,18 @@
         }
       });
     });
+  };
+
+  $: deletePass = async () => {
+    await fetch(`http://localhost:5000/purchasables/${slug}/`, {
+      mode: "cors",
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${$jwt}`
+      }
+    });
+    goto("/");
   };
 </script>
 
@@ -165,7 +181,7 @@
 <h1 class="heading">{purchasable.name}</h1>
 {#if isAdmin}
   <a class="button" href={`/edit-day-pass/${purchasable.id}`}>Edit day pass</a>
-  <button class="deleteDayPass">Delete day pass</button>
+  <button class="deleteDayPass" on:click={deletePass}>Delete day pass</button>
 {/if}
 <Panel title="Details">
   <div class="description">{purchasable.description}</div>

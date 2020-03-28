@@ -407,16 +407,16 @@ def updateEvent(id):
 
 
 # Delete one event
-@app.route("/events/<id>/", methods=['DELETE'])
-@jwt_required
-def deleteEvent(id):
-    identity = get_jwt_identity()
-    id = int(id)
-    if identity['isAdmin']:
-        event = db.session.query(Event).filter(Event.id == id).delete()
-        db.session.commit()
-        return "Deleted event {}".format(id)
-    return "Forbidden", 403
+# @app.route("/events/<id>/", methods=['DELETE'])
+# @jwt_required
+# def deleteEvent(id):
+#     identity = get_jwt_identity()
+#     id = int(id)
+#     if identity['isAdmin']:
+#         event = db.session.query(Event).filter(Event.id == id).delete()
+#         db.session.commit()
+#         return "Deleted event {}".format(id)
+#     return "Forbidden", 403
 
 
 # Create new purchasable
@@ -521,9 +521,20 @@ def deletePurchasable(id):
     identity = get_jwt_identity()
     id = int(id)
     if identity['isAdmin']:
-        purchasable = db.session.query(Purchasable).filter(
-            Purchasable.id == id).delete()
+        # delete tickets
+        db.session.query(Ticket).filter(Ticket.purchasable_id == id).delete()
+
+        # delete events
+        db.session.query(Event).filter(Event.purchasable_id == id).delete()
+
+        # delete Purchasable_TicketClass relation
+        db.session.query(Purchasable_TicketClass).filter(
+            Purchasable_TicketClass.purchasable_id == id).delete()
+
+        # delete purchasable
+        db.session.query(Purchasable).filter(Purchasable.id == id).delete()
         db.session.commit()
+
         return "Deleted purchasable {}".format(id)
     return "Forbidden", 403
 
