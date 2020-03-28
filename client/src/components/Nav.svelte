@@ -15,6 +15,8 @@
   ul {
     margin: 1;
     padding: 0;
+    display: flex;
+    align-items: center;
   }
 
   /* clearfix */
@@ -62,20 +64,26 @@
       <a class:selected={segment === ''} href="/">Events</a>
     </li>
     <li>
-      <a class:selected={segment === 'DayPasses'} href="DayPasses">DayPasses</a>
+      <a class:selected={segment === 'Accessibility'} href="Accessibility">
+        Accessibility
+      </a>
     </li>
-    <li>
-      <a class:selected={segment === 'Accessibility'} href="Accessibility">Accessibility</a>
-    </li>
-    <li>
-      <a class:selected={segment === 'Cart'} href="Cart">Cart</a>
-    </li>
-    <li>
-      <a class:selected={segment === 'Account'} href="Account">Account</a>
-    </li>
+    {#if $jwt}
+      <li>
+        <a class:selected={segment === 'Cart'} href="Cart">Cart</a>
+      </li>
+      <li>
+        <a class:selected={segment === 'MyTickets'} href="MyTickets">
+          My Tickets
+        </a>
+      </li>
+      <li>
+        <a class:selected={segment === 'Account'} href="Account">Account</a>
+      </li>
+    {/if}
     <li>
       <a class:selected={segment === 'Questionnaire'} href="Questionnaire">
-        Questionnaire
+        Questionnaire (?)
       </a>
     </li>
     <li>

@@ -1,9 +1,33 @@
 <script>
+  import { goto } from "@sapper/app";
   import { onMount } from "svelte";
-  import { jwt } from "../stores.js";
+  import { jwt, userId } from "../stores.js";
   let paymentForm;
 
+  let subtotal = 0;
+  let tax = 0;
+  let total = 0;
+
+  const refreshCart = async () => {
+    const res = await fetch(`http://localhost:5000/users/${$userId}/cart/`, {
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${$jwt}`
+      }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      subtotal = data.ticketSubTotal;
+      tax = data.tax;
+      total = data.totalPrice;
+    } else {
+      alert("Something went wrong. Please try again in a moment.");
+    }
+  };
+
   onMount(() => {
+    refreshCart();
     // Create and initialize a payment form object
     paymentForm = new SqPaymentForm({
       // Initialize the payment form elements
@@ -51,12 +75,9 @@
             errors.forEach(error => {
               console.error("  " + error.message);
             });
-            alert(
-              "Encountered errors, check browser developer console for more details"
-            );
+            alert("Something went wrong. Please try again in a moment.");
             return;
           }
-          alert(`The generated nonce is:\n${nonce}`);
           fetch("http://localhost:5000/checkout/", {
             method: "POST",
             headers: {
@@ -80,15 +101,12 @@
               return response.text();
             })
             .then(data => {
-              console.log(JSON.stringify(data));
-              alert(
-                "Payment complete successfully!\nCheck browser developer console for more details"
-              );
+              goto("/PaymentSuccess");
             })
             .catch(err => {
               console.error(err);
               alert(
-                "Payment failed to complete!\nCheck browser developer console for more details"
+                "Payment failed to complete! Please try again in a moment."
               );
             });
         }
@@ -105,6 +123,13 @@
   };
 </script>
 
+<style>
+  h2 {
+    text-align: center;
+  }
+</style>
+
+<h2>Complete ticket purchase</h2>
 <div id="form-container">
   <div id="sq-card-number" />
   <div class="third" id="sq-expiration-date" />
@@ -114,6 +139,6 @@
     id="sq-creditcard"
     class="button-credit-card"
     on:click={onGetCardNonce}>
-    Pay $1.00
+    Pay ${total}
   </button>
 </div>
