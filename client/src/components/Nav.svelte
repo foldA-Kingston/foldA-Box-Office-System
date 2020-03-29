@@ -81,12 +81,6 @@
         <a class:selected={segment === 'Account'} href="Account">Account</a>
       </li>
     {/if}
-    <li>
-      <a class:selected={segment === 'Questionnaire'} href="Questionnaire">
-        Questionnaire (?)
-      </a>
-    </li>
-    <li>
       {#if $jwt}
         <button
           on:click={() => {
