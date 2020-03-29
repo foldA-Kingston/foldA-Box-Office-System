@@ -61,7 +61,7 @@
         alt="foldA Logo" />
     </li>
     <li>
-      <a class:selected={segment === ''} href="/">Events</a>
+      <a class:selected={!segment} href="/">Events</a>
     </li>
     <li>
       <a class:selected={segment === 'Accessibility'} href="Accessibility">
@@ -80,6 +80,11 @@
       <li>
         <a class:selected={segment === 'Account'} href="Account">Account</a>
       </li>
+      {#if $isAdmin}
+        <li>
+          <a class:selected={segment === 'Admins'} href="Admins">Admins</a>
+        </li>
+      {/if}
       <li>
         <button
           on:click={() => {

@@ -311,6 +311,49 @@ def deleteUser(id):
     return "Forbidden", 403
 
 
+# Get admins
+@app.route("/admins/", methods=['GET'])
+@jwt_required
+def getAdmins():
+    identity = get_jwt_identity()
+    if identity['isAdmin']:
+        admins = db.session.query(User).filter(User.isAdmin == True).all()
+        return jsonify([serialize(admin) for admin in admins])
+    return "Forbidden", 403
+
+
+# Create new admin
+@app.route("/admins/", methods=['POST'])
+@jwt_required
+def createAdmin():
+    identity = get_jwt_identity()
+    if identity['isAdmin']:
+        emailAddress = request.json.get("emailAddress")
+        if emailAddress:
+            newAdmin = db.session.query(User).filter(User.emailAddress == emailAddress, User.isAdmin == False).one();
+            newAdmin.isAdmin = True
+            db.session.commit()
+            return "Success", 200
+        else:
+            return "Bad request", 400
+    return "Forbidden", 403
+
+# Remove admin
+@app.route("/admins/<id>/", methods=['DELETE'])
+@jwt_required
+def removeAdmin(id):
+    identity = get_jwt_identity()
+    if identity['isAdmin']:
+        userId = int(id)
+        if userId and userId != int(identity['id']):
+            admin = db.session.query(User).filter(User.id == userId, User.isAdmin == True).one();
+            admin.isAdmin = False
+            db.session.commit()
+            return "Success", 200
+        else:
+            return "Bad request", 400
+    return "Forbidden", 403
+
 # Create new event
 @app.route("/events/", methods=['POST'])
 @jwt_required

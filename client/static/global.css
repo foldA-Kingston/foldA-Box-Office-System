@@ -32,6 +32,15 @@ h1 {
   font-size: 2em;
 }
 
+th,
+td {
+  text-align: center;
+}
+
+table {
+  width: 100%;
+}
+
 a {
   color: inherit;
 }
