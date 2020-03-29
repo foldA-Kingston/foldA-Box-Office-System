@@ -80,8 +80,7 @@
       <li>
         <a class:selected={segment === 'Account'} href="Account">Account</a>
       </li>
-    {/if}
-      {#if $jwt}
+      <li>
         <button
           on:click={() => {
             jwt.set('');
@@ -91,9 +90,11 @@
           }}>
           Log out
         </button>
-      {:else}
+      </li>
+    {:else}
+      <li>
         <a class:selected={segment === 'SignIn'} href="SignIn">Log in</a>
-      {/if}
-    </li>
+      </li>
+    {/if}
   </ul>
 </nav>
