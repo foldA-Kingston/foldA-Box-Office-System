@@ -180,43 +180,9 @@ class User(db.Model):
     association = db.Column(db.String, supports_json=True)
     password = db.Column(db.String, nullable=False)
 
-    feedbackAnswers = db.relationship(
-        'FeedbackAnswer', backref='User')
-
     tickets = db.relationship(
         'Ticket', backref='User')
 
-
-class FeedbackAnswer(db.Model):
-    __tablename__ = 'FeedbackAnswer'
-    id = db.Column(db.Integer, primary_key=True,
-                   autoincrement=True, nullable=False, unique=True)
-    response = db.Column(db.String, nullable=False)
-
-    feedbackQuestion_id = db.Column(
-        db.Integer, db.ForeignKey('FeedbackQuestion.id'), nullable=False)
-    feedbackQuestion = db.relationship(
-        'FeedbackQuestion', backref='FeedbackAnswer')
-
-    user_id = db.Column(
-        db.Integer, db.ForeignKey('User.id'), nullable=False)
-    user = db.relationship(
-        'User', backref='FeedbackAnswer')
-
-
-class FeedbackQuestion(db.Model):
-    __tablename__ = 'FeedbackQuestion'
-    id = db.Column(db.Integer, primary_key=True,
-                   autoincrement=True, nullable=False, unique=True)
-    text = db.Column(db.String, nullable=False)
-
-    purchasable_id = db.Column(
-        db.Integer, db.ForeignKey('Purchasable.id'), nullable=False)
-    purchasable = db.relationship(
-        'Purchasable', backref='FeedbackQuestion')
-
-    feedbackAnswers = db.relationship(
-        'FeedbackAnswer', backref='FeedbackQuestion')
 
 
 def serialize(obj):
