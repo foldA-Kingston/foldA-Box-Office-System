@@ -6,13 +6,16 @@
   let admins = [];
 
   const getAdmins = async () => {
-    admins = await fetch("http://localhost:5000/admins/", {
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${$jwt}`
+    admins = await fetch(
+      "https://folda-box-office-system.herokuapp.com/admins/",
+      {
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${$jwt}`
+        }
       }
-    }).then(r => r.json());
+    ).then(r => r.json());
   };
 
   onMount(() => {
@@ -22,7 +25,7 @@
   let newAdminEmail = "";
 
   $: addAdmin = async () => {
-    await fetch("http://localhost:5000/admins/", {
+    await fetch("https://folda-box-office-system.herokuapp.com/admins/", {
       mode: "cors",
       method: "POST",
       headers: {
@@ -35,7 +38,7 @@
   };
 
   const removeAdmin = async id => {
-    await fetch(`http://localhost:5000/admins/${id}/`, {
+    await fetch(`https://folda-box-office-system.herokuapp.com/admins/${id}/`, {
       mode: "cors",
       method: "DELETE",
       headers: {

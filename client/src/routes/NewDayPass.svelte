@@ -38,7 +38,7 @@
   };
 
   $: handleCreate = () => {
-    fetch("http://localhost:5000/purchasables/", {
+    fetch("https://folda-box-office-system.herokuapp.com/purchasables/", {
       mode: "cors",
       method: "POST",
       headers: {
@@ -59,18 +59,21 @@
         await Promise.all(
           events.map(
             async event =>
-              await fetch("http://localhost:5000/events/", {
-                mode: "cors",
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${$jwt}`
-                },
-                body: JSON.stringify({
-                  ...event,
-                  purchasableId: result.id
-                })
-              })
+              await fetch(
+                "https://folda-box-office-system.herokuapp.com/events/",
+                {
+                  mode: "cors",
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${$jwt}`
+                  },
+                  body: JSON.stringify({
+                    ...event,
+                    purchasableId: result.id
+                  })
+                }
+              )
           )
         );
 
@@ -84,12 +87,15 @@
   let ticketClassOptions;
 
   $: fetchTicketClasses = async () => {
-    const res = await fetch(`http://localhost:5000/ticketClasses/`, {
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json"
+    const res = await fetch(
+      `https://folda-box-office-system.herokuapp.com/ticketClasses/`,
+      {
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json"
+        }
       }
-    });
+    );
     const ticketClasses = await res.json();
     ticketClassOptions = ticketClasses.map(tc => ({
       label: `${tc.description} – $${tc.price}`,
@@ -106,18 +112,21 @@
     const price = prompt("Ticket class price:");
 
     if (description && price) {
-      await fetch("http://localhost:5000/ticketClasses/", {
-        mode: "cors",
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${$jwt}`
-        },
-        body: JSON.stringify({
-          description,
-          price: Number(price)
-        })
-      }).then(r => {
+      await fetch(
+        "https://folda-box-office-system.herokuapp.com/ticketClasses/",
+        {
+          mode: "cors",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${$jwt}`
+          },
+          body: JSON.stringify({
+            description,
+            price: Number(price)
+          })
+        }
+      ).then(r => {
         if (r.ok) {
           fetchTicketClasses();
         } else {

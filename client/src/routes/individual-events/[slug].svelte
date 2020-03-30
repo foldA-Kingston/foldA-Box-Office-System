@@ -17,12 +17,15 @@
   const ticketSelection = {};
 
   onMount(async () => {
-    const res = await fetch(`http://localhost:5000/events/${slug}/`, {
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json"
+    const res = await fetch(
+      `https://folda-box-office-system.herokuapp.com/events/${slug}/`,
+      {
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json"
+        }
       }
-    });
+    );
     event = await res.json();
     if (event.purchasable && event.purchasable.ticketClasses) {
       event.purchasable.ticketClasses.forEach(tc => {
@@ -33,20 +36,23 @@
 
   $: addToCart = () => {
     Object.keys(ticketSelection).forEach(ticketClassId => {
-      fetch(`http://localhost:5000/users/${$userId}/cart/`, {
-        mode: "cors",
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${$jwt}`
-        },
-        body: JSON.stringify({
-          purchasableId: event.purchasable.id,
-          ticketClassId: Number(ticketClassId),
-          quantity: ticketSelection[ticketClassId],
-          events: [event.id]
-        })
-      }).then(r => {
+      fetch(
+        `https://folda-box-office-system.herokuapp.com/users/${$userId}/cart/`,
+        {
+          mode: "cors",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${$jwt}`
+          },
+          body: JSON.stringify({
+            purchasableId: event.purchasable.id,
+            ticketClassId: Number(ticketClassId),
+            quantity: ticketSelection[ticketClassId],
+            events: [event.id]
+          })
+        }
+      ).then(r => {
         if (r.ok) {
           goto(`/Cart`);
         } else {
@@ -57,14 +63,17 @@
   };
 
   $: deleteEvent = async () => {
-    await fetch(`http://localhost:5000/purchasables/${event.purchasable_id}/`, {
-      mode: "cors",
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${$jwt}`
+    await fetch(
+      `https://folda-box-office-system.herokuapp.com/purchasables/${event.purchasable_id}/`,
+      {
+        mode: "cors",
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${$jwt}`
+        }
       }
-    });
+    );
     goto("/");
   };
 </script>

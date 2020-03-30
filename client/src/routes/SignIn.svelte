@@ -6,17 +6,20 @@
   let password = "";
 
   const signIn = async () => {
-    const result = await fetch("http://localhost:5000/auth/", {
-      mode: "cors",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        emailAddress: email,
-        password
-      })
-    });
+    const result = await fetch(
+      "https://folda-box-office-system.herokuapp.com/auth/",
+      {
+        mode: "cors",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          emailAddress: email,
+          password
+        })
+      }
+    );
     const data = await result.json();
 
     jwt.set(data.access_token);

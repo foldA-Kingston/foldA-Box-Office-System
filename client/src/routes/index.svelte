@@ -7,12 +7,15 @@
   let purchasables = [];
 
   onMount(async () => {
-    const result = await fetch("http://localhost:5000/purchasables/", {
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json"
+    const result = await fetch(
+      "https://folda-box-office-system.herokuapp.com/purchasables/",
+      {
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json"
+        }
       }
-    });
+    );
     purchasables = await result.json();
   });
 </script>

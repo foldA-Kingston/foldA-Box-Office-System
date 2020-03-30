@@ -8,7 +8,7 @@
 
   function handleCreate() {
     if (password === confirmpassword) {
-      fetch("http://localhost:5000/users/", {
+      fetch("https://folda-box-office-system.herokuapp.com/users/", {
         mode: "cors",
         method: "POST",
         headers: {

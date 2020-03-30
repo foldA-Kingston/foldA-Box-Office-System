@@ -14,7 +14,7 @@
 
   const refreshCart = async () => {
     const res = await fetch(
-      `http://localhost:5000/users/${$userId}/purchased/`,
+      `https://folda-box-office-system.herokuapp.com/users/${$userId}/purchased/`,
       {
         mode: "cors",
         headers: {

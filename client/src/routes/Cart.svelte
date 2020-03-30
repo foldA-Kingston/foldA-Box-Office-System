@@ -13,13 +13,16 @@
   let total = 0;
 
   const refreshCart = async () => {
-    const res = await fetch(`http://localhost:5000/users/${$userId}/cart/`, {
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${$jwt}`
+    const res = await fetch(
+      `https://folda-box-office-system.herokuapp.com/users/${$userId}/cart/`,
+      {
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${$jwt}`
+        }
       }
-    });
+    );
     if (res.ok) {
       const data = await res.json();
       cart = data.purchasables.map(purchasable => ({

@@ -7,14 +7,17 @@
   import { formatDate } from "../utils.js";
 
   const removeFromCart = () => {
-    fetch(`http://localhost:5000/users/${$userId}/cart/${purchasable.id}/`, {
-      mode: "cors",
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${$jwt}`
+    fetch(
+      `https://folda-box-office-system.herokuapp.com/users/${$userId}/cart/${purchasable.id}/`,
+      {
+        mode: "cors",
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${$jwt}`
+        }
       }
-    }).then(r => {
+    ).then(r => {
       if (r.ok) {
         refreshCart();
       } else {

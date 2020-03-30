@@ -9,13 +9,16 @@
   let total = 0;
 
   const refreshCart = async () => {
-    const res = await fetch(`http://localhost:5000/users/${$userId}/cart/`, {
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${$jwt}`
+    const res = await fetch(
+      `https://folda-box-office-system.herokuapp.com/users/${$userId}/cart/`,
+      {
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${$jwt}`
+        }
       }
-    });
+    );
     if (res.ok) {
       const data = await res.json();
       subtotal = data.ticketSubTotal;
@@ -78,7 +81,7 @@
             alert("Something went wrong. Please try again in a moment.");
             return;
           }
-          fetch("http://localhost:5000/checkout/", {
+          fetch("https://folda-box-office-system.herokuapp.com/checkout/", {
             method: "POST",
             headers: {
               Accept: "application/json",

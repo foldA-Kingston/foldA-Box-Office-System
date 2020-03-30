@@ -47,7 +47,7 @@
   };
 
   $: handleUpdate = () => {
-    fetch(`http://localhost:5000/purchasables/${id}/`, {
+    fetch(`https://folda-box-office-system.herokuapp.com/purchasables/${id}/`, {
       mode: "cors",
       method: "PUT",
       headers: {
@@ -75,12 +75,15 @@
   let ticketClassOptions;
 
   $: fetchTicketClasses = async () => {
-    const res = await fetch(`http://localhost:5000/ticketClasses/`, {
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json"
+    const res = await fetch(
+      `https://folda-box-office-system.herokuapp.com/ticketClasses/`,
+      {
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json"
+        }
       }
-    });
+    );
     const ticketClasses = await res.json();
     ticketClassOptions = ticketClasses.map(tc => ({
       label: `${tc.description} – $${tc.price}`,
@@ -95,7 +98,7 @@
 
   const fetchDayPass = async () => {
     let purchasable = await fetch(
-      `http://localhost:5000/purchasables/${id}/`
+      `https://folda-box-office-system.herokuapp.com/purchasables/${id}/`
     ).then(r => r.json());
     description = purchasable.description;
     numTickets = purchasable.numTickets;
@@ -114,18 +117,21 @@
     const price = prompt("Ticket class price:");
 
     if (description && price) {
-      await fetch("http://localhost:5000/ticketClasses/", {
-        mode: "cors",
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${$jwt}`
-        },
-        body: JSON.stringify({
-          description,
-          price: Number(price)
-        })
-      }).then(r => {
+      await fetch(
+        "https://folda-box-office-system.herokuapp.com/ticketClasses/",
+        {
+          mode: "cors",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${$jwt}`
+          },
+          body: JSON.stringify({
+            description,
+            price: Number(price)
+          })
+        }
+      ).then(r => {
         if (r.ok) {
           fetchTicketClasses();
         } else {
@@ -142,7 +148,7 @@
   };
 
   const saveEvent = async () => {
-    await fetch("http://localhost:5000/events/", {
+    await fetch("https://folda-box-office-system.herokuapp.com/events/", {
       mode: "cors",
       method: "POST",
       headers: {
