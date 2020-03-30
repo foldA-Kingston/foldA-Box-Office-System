@@ -11,8 +11,8 @@
   import "flatpickr/dist/themes/light.css";
 
   let artistName = "";
-  let imageUrl = null;
-  let embedMedia = null;
+  let imageUrl = "";
+  let embedMedia = "";
   let description = "";
   let startTime = null;
   let endTime = null;
@@ -145,7 +145,7 @@
     <input bind:value={artistName} />
   </div>
   <div class="inputField">
-    <h3>Image URL</h3>
+    <h3>Image name</h3>
     <input bind:value={imageUrl} />
   </div>
   <div class="inputField">

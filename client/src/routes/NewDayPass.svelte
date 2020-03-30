@@ -18,8 +18,8 @@
 
   let eventInput = {
     artistName: "",
-    imageUrl: null,
-    embedMedia: null,
+    imageUrl: "",
+    embedMedia: "",
     description: "",
     startTime: null,
     endTime: null,
@@ -227,7 +227,7 @@
         <input bind:value={eventInput.artistName} />
       </div>
       <div class="inputField">
-        <h3>Image URL</h3>
+        <h3>Image name</h3>
         <input bind:value={eventInput.imageUrl} />
       </div>
       <div class="inputField">

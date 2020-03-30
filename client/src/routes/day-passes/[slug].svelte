@@ -129,13 +129,17 @@
     align-items: center;
   }
 
-  .dayEvent .imgPlaceholder {
-    height: 5rem;
-    width: 5rem;
+  .thumbnail {
     border-radius: 50%;
-    border: 2px solid #555;
-    background-color: var(--offwhite);
-    margin-right: 1rem;
+    overflow: hidden;
+    width: 6rem;
+    height: 6rem;
+    margin-right: 1.5rem;
+  }
+
+  .thumbnail img {
+    height: 100%;
+    width: 100%;
   }
 
   .dayEventHeading {
@@ -219,7 +223,9 @@
   <Panel title="Select events">
     {#each events as event}
       <div class="dayEvent">
-        <div class="imgPlaceholder" />
+        <div class="thumbnail">
+          <img src={`events/${event.imageUrl}`} alt={event.name} />
+        </div>
         <div>
           <div class="dayEventHeading">
             <h4>{event.name}</h4>

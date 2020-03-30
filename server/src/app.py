@@ -341,6 +341,8 @@ def createEvent():
             artistName=request.json.get("artistName"),
             description=request.json.get("description"),
             name=request.json.get("name"),
+            imageUrl=request.json.get("imageUrl"),
+            embedMedia=request.json.get("embedMedia"),
             startTime=request.json.get("startTime"),
             endTime=request.json.get("endTime"),
             venue=request.json.get("venue"),
@@ -424,6 +426,8 @@ def updateEvent(id):
         event.artistName = request.json.get("artistName"),
         event.description = request.json.get("description"),
         event.name = request.json.get("name"),
+        event.imageUrl=request.json.get("imageUrl"),
+        event.embedMedia=request.json.get("embedMedia"),
         event.startTime = request.json.get("startTime"),
         event.endTime = request.json.get("endTime"),
         event.venue = request.json.get("venue"),
@@ -566,7 +570,7 @@ def deletePurchasable(id):
     return "Forbidden", 403
 
 
-# Create new user
+# Create new TicketClass
 @app.route("/ticketClasses/", methods=['POST'])
 @jwt_required
 def createTicketClass():

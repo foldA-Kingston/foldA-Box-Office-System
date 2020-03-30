@@ -119,7 +119,7 @@
       <img
         class="eventimg"
         alt="Event Photo"
-        src={event.src}
+        src={`events/${event.imageUrl}`}
         width="250"
         height="200" />
       <h class="eventheading">

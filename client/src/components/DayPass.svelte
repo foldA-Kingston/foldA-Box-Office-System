@@ -58,7 +58,9 @@
 <Panel title={`Day pass: ${purchasable.name}`}>
   <div class="panelContent">
     <div class="thumbnail">
-      <img src="event2.png" alt={purchasable.name} />
+      <img
+        src={`events/${purchasable.events[0].imageUrl}`}
+        alt={purchasable.name} />
     </div>
     <div>
       <div class="eventHeading">

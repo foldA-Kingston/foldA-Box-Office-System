@@ -55,7 +55,7 @@
   <Panel title={`Single event: ${purchasable.name}`}>
     <div class="panelContent">
       <div class="thumbnail">
-        <img src="event2.png" alt={event.name} />
+        <img src={`events/${event.imageUrl}`} alt={event.name} />
       </div>
       <div>
         <div class="eventHeading">

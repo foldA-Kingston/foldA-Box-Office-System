@@ -90,7 +90,7 @@
           on:click={() => {
             jwt.set('');
             userId.set('');
-            isAdmin.set('');
+            isAdmin.set(false);
             emailAddress.set('');
           }}>
           Log out

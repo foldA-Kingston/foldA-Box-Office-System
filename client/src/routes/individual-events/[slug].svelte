@@ -145,7 +145,7 @@
       <img
         class="eventimg"
         alt="Event Photo"
-        src={event.imageUrl}
+        src={`events/${event.imageUrl}`}
         width="500"
         height="400" />
     </div>
