@@ -3,5 +3,5 @@ import { writable as persist } from "svelte-persistent-store/session";
 
 export const jwt = persist("jwt", "");
 export const emailAddress = persist("emailAddress", "");
-export const isAdmin = persist("isAdmin", false);
+export const isAdmin = persist("isAdmin", "");
 export const userId = persist("userId", "");

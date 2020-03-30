@@ -205,7 +205,7 @@
     <button on:click={addToCart}>Add to cart</button>
   </div>
 </div>
-{#if isAdmin}
+{#if $isAdmin == 'yes'}
   <a class="button" href={`/edit-event/${event.id}`}>Edit event</a>
   <button on:click={deleteEvent} class="deleteEvent">Delete event</button>
 {/if}

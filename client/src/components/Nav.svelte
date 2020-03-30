@@ -80,7 +80,7 @@
       <li>
         <a class:selected={segment === 'Account'} href="Account">Account</a>
       </li>
-      {#if $isAdmin}
+      {#if $isAdmin === 'yes'}
         <li>
           <a class:selected={segment === 'Admins'} href="Admins">Admins</a>
         </li>
@@ -90,7 +90,7 @@
           on:click={() => {
             jwt.set('');
             userId.set('');
-            isAdmin.set(false);
+            isAdmin.set('');
             emailAddress.set('');
           }}>
           Log out
