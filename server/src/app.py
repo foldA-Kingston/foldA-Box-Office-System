@@ -178,7 +178,7 @@ class User(db.Model):
     gender = db.Column(db.String, supports_json=True)
     birthDate = db.Column(db.Date, supports_json=True)
     association = db.Column(db.String, supports_json=True)
-    password = db.Column(db.String, nullable=False)
+    password = db.Column(db.String, nullable=False, supports_json=True)
 
     tickets = db.relationship(
         'Ticket', backref='User')
@@ -263,6 +263,17 @@ def updateUser(id):
         return serialize(user)
     return "Forbidden", 403
 
+@app.route("/users/<id>/", methods=['PATCH'])
+@jwt_required
+def updateUserpassword(id):
+    identity = get_jwt_identity()
+    id = int(id)
+    if identity['id'] == id or identity['isAdmin']:
+        user = db.session.query(User).filter(User.id == id).one()
+        user.password =getHashedPassword(request.json.get("password"))
+        db.session.commit()
+        return serialize(user)
+    return "Forbidden", 403
 
 # Delete one user
 @app.route("/users/<id>/", methods=['DELETE'])
