@@ -1,9 +1,36 @@
 <script>
-	let firstname = 'barry';
-	let lastname = 'liu';
-	let email = '15ml81@queensu.ca';
-	function handleSave(){
-		alert('change saved')
+	import { jwt, userId } from "../stores.js";
+	import Panel from "../components/Panel.svelte";
+	let newname = "";
+	let newpassword = "";
+	let newpasswordconfirm = "";
+	const saveName = async () => {
+		const result = await fetch(`http://localhost:5000/users/${$userId}`,
+		{
+			mode: "cors",
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${$jwt}`
+			},
+        	body: JSON.stringify({
+          		name : newname,
+        	})
+		})
+	}
+	const savePassword = async () => {
+		const result = await fetch(`http://localhost:5000/users/${$userId}`,
+		{
+			mode: "cors",
+			method: "PATCH",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${$jwt}`
+			},
+			body: JSON.stringify({
+				password : newpassword,
+			})
+		})
 	}
 </script>
 	
@@ -23,27 +50,20 @@
 		flex: 1;
 		padding: 1rem;
 	}
-	.right{
-		flex: 1;
-		padding: 1rem;
-	}
-	.emails{
-		padding: 1rem;
-	}
-	.passwordsetting{
-		padding: 1rem;
-	}
-	.password{
+	.changename{
 		background: transparent;
 		color: #4045ed;
 		font-style: italic;
 	}
-	.saveandlogout{
-		padding: 1rem;
+	.password{
+		display: flex;
 	}
-	.savechange{
-		margin-right: 2rem;
+	.changepassword{
+		background: transparent;
+		color: #4045ed;
+		font-style: italic;
 	}
+
 
 </style>
 <svelte:head>
@@ -56,30 +76,24 @@
 <div class="panel">
 	<div class="name">
 		<div class="left">
-			<h3>First Name</h3>
-			<input value={firstname}>
-
-		</div>
-		<div class="right">
-			<h3>Last Name</h3>
-			<input value={lastname}>
+			<h3>Name</h3>
+			<input bind:value={newname}>
+			<button class="changename" on:click={saveName}>
+			<h3>Change name</h3>
+			</button>
 		</div>
 	</div>
-	<div class ="emails">
-		<h3>Email</h3>
-		<input value={email}>
-	</div>
-	<div class ="passwordsetting">
-		<button class="password">
+	<div class="password">
+		<div class="left">
+			<h3>New Password</h3>
+			<input bind:value={newpassword}>
+			<h3>Confirm Password</h3>
+			<input bind:value={newpasswordconfirm}>
+			{#if newpassword === newpasswordconfirm}
+			<button class="changepassword" on:click={savePassword}>
 			<h3>Change Password</h3>
-		</button>
-	</div>
-	<div class ="saveandlogout">
-		<button class="savechange" on:click={handleSave}>
-			<h3>Save Changes</h3>
-		</button>
-		<button class="logout" onclick="location='Signin'">
-			<h3>Logout</h3>
-		</button>
+			</button>
+			{/if}
+		</div>
 	</div>
 </div>
