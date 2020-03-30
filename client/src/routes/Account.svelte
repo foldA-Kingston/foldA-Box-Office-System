@@ -5,7 +5,7 @@
 	let newpassword = "";
 	let newpasswordconfirm = "";
 	const saveName = async () => {
-		const result = await fetch(`http://localhost:5000/users/${$userId}`,
+		const result = await fetch(`http://localhost:5000/users/${$userId}/`,
 		{
 			mode: "cors",
 			method: "PUT",
@@ -19,7 +19,7 @@
 		})
 	}
 	const savePassword = async () => {
-		const result = await fetch(`http://localhost:5000/users/${$userId}`,
+		const result = await fetch(`http://localhost:5000/users/${$userId}/`,
 		{
 			mode: "cors",
 			method: "PATCH",
