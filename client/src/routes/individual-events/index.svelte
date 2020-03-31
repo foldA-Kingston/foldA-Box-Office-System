@@ -69,6 +69,10 @@
     clear: left;
   }
 
+  .video {
+    padding-left: 13rem;
+  }
+
   .dropdown {
     position: relative;
     display: inline-block;
@@ -134,6 +138,19 @@
         <br />
         Artist: {event.artist}
       </p>
+      {#if event.embedMedia}
+        <div class="video">
+          <iframe 
+            title="video"
+            width="280" 
+            height="157.5" 
+            src={event.embedMedia}
+            frameborder="0" 
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+          </iframe>
+        </div>
+      {/if}
       <div class="buttonwrapper">
         <button onclick="window.location.href = 'events/{event.slug}';">
           Buy Tickets

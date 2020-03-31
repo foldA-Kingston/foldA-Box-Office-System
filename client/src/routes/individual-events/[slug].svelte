@@ -133,6 +133,10 @@
     width: 200px;
   }
 
+  .video {
+    padding-left: 13rem;
+  }
+
   .description {
     padding: 1rem;
   }
@@ -173,6 +177,19 @@
       </div>
       <div class="description">{event.description}</div>
     </div>
+    {#if event.embedMedia}
+      <div class="video">
+        <iframe 
+          title="video"
+          width="280" 
+          height="157.5" 
+          src={event.embedMedia}
+          frameborder="0" 
+          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen>
+        </iframe>
+      </div>
+    {/if}
   </div>
   <div style="width:50%">
     <table>

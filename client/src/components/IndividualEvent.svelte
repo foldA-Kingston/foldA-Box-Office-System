@@ -45,6 +45,12 @@
     font-style: italic;
   }
 
+  .video {
+    border-radius: 50%;
+    margin: 0;
+    padding-right: 0.5rem;
+  }
+
   .buttonWrapper {
     display: flex;
     align-items: center;
@@ -68,6 +74,19 @@
         <div class="artistName">{event.artistName}</div>
         <div>{event.description}</div>
       </div>
+      {#if event.embedMedia}
+        <div class="video">
+          <iframe 
+            title="video"
+            width="280" 
+            height="157.5" 
+            src={event.embedMedia}
+            frameborder="0" 
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+          </iframe>
+        </div>
+      {/if}
       <div class="buttonWrapper">
         <a class="button" href={`/individual-events/${event.id}`}>
           Buy Tickets
