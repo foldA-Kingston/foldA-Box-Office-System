@@ -28,7 +28,6 @@
     userId.set(data.userId);
 
     goto("/");
-    // TODO: set more info here, like user's name and email
   };
 </script>
 
