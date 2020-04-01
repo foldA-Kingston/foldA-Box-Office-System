@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, abort
+from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 from sqlathanor import FlaskBaseModel, initialize_flask_sqlathanor
 from flask_migrate import Migrate
@@ -44,6 +45,21 @@ db = initialize_flask_sqlathanor(db)
 
 migrate = Migrate(app, db)
 
+#email config
+app.config['DEBUG'] = True
+app.config['TESTING'] = False
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+#app.config['MAIL_DEBUG'] = True
+app.config['MAIL_USERNAME'] = 'foldaconfirmation@gmail.com'
+app.config['MAIL_PASSWORD'] = 'folda2020'
+app.config['MAIL_DEFAULT_SENDER'] = ('FoldA Festival of Live Digital Art','foldaconfirmation@gmail.com')
+app.config['MAIL_MAX_EappS'] = 1000
+#app.config['MAIL_SUPPRESS_SEND'] = False
+app.config['MAIL_ASCII_ATTACHMENTS'] = False
+mail = Mail(app)
 
 class Event_Ticket(db.Model):
     __tablename__ = 'Event_Ticket'
@@ -721,7 +737,16 @@ def checkout():
         }
         try:
             r = square.payments.create_payment(body)
-            for ticket in db.session.query(Ticket).filter(Ticket.user_id == identity['id']).all():
+                
+        
+            #return 'Message has been sent!'
+            tickets = db.session.query(Ticket).join(TicketClass, TicketClass.id == Ticket.ticketClass_id).join(Event_Ticket, Ticket.id == Event_Ticket.ticket_id).filter(Ticket.user_id == identity['id']).all()
+
+            msg = Message('Confirming Purchase', recipients=[identity['emailAddress']])
+            msg.body = 'Congratulations you have purchased the following tickets: ' + "\n".join("{}{}".format(ticket.ticketClass.price, ticket.event.name))
+            mail.send(msg)
+            
+            for ticket in tickets:
                 ticket.isPurchased = True
             db.session.commit()
             return r.text
