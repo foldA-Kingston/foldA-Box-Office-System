@@ -265,7 +265,9 @@
         </p>
       </div>
       <div class="inputField">
-        <h3>Embedded media (e.g. YouTube video)</h3>
+        <h3>Embedded media (e.g. YouTube video). For YouTube Video's, please enter as:</h3>
+        <h3>"https://youtube.com/embed/[Video ID Here]"</h3>
+        <h4>The Video ID can be found in the link, right after "watch?v="</h4>
         <input bind:value={eventInput.embedMedia} />
       </div>
       <div class="inputField">
