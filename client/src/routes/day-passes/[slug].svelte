@@ -244,6 +244,19 @@
             </time>
           </div>
           <div class="artistName">{event.artistName}</div>
+          {#if event.embedMedia}
+            <div class="video">
+              <iframe 
+                title="video"
+                width="280" 
+                height="157.5" 
+                src={event.embedMedia}
+                frameborder="0" 
+                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+              </iframe>
+            </div>
+          {/if}
         </div>
         <div class="removeButtonWrapper">
           {#if selectedEventIds.includes(event.id)}

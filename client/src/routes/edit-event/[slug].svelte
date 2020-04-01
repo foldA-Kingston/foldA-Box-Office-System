@@ -192,18 +192,18 @@
   <div class="inputField">
     <h3>Embedded media (e.g. YouTube video). For YouTube Video's, please enter as:</h3>
     <h3>"https://youtube.com/embed/[Video ID Here]"</h3>
-    <h3>The Video ID can be found in the link, right after "watch?v="</h3>
+    <h4>The Video ID can be found in the link, right after "watch?v="</h4>
     <input bind:value={embedMedia} />
   </div>
   <div class="inputField">
-    <h3>Start date / time</h3>
+    <h3>Start Date / Time</h3>
     <Flatpickr
       options={flatpickrOptions}
       bind:value={startTime}
       placeholder="Start time" />
   </div>
   <div class="inputField">
-    <h3>End date / time</h3>
+    <h3>End Date / Time</h3>
     <Flatpickr
       options={flatpickrOptions}
       bind:value={endTime}
