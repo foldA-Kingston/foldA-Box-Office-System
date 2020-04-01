@@ -93,7 +93,7 @@
 
   .panel {
     width: 800px;
-    height: 350px;
+    min-height: 350px;
     border-radius: 10px;
     overflow: hidden;
     margin: 1rem 0.5rem;
@@ -129,8 +129,8 @@
   }
 
   .panelImg {
-    height: 100px;
-    width: 200px;
+    max-height: 200px;
+    max-width: 400px;
   }
 
   .video {
@@ -158,9 +158,7 @@
       <img
         class="eventimg"
         alt="Event Photo"
-        src={`events/${event.imageUrl}`}
-        width="500"
-        height="400" />
+        src={`events/${event.imageUrl}`} />
     </div>
     <div class="panelText">
       <div class="date">
