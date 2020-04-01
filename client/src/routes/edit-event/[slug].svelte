@@ -181,7 +181,7 @@
     <h3>Image name</h3>
     <input bind:value={imageUrl} />
     <p>
-      Upload image
+      Upload Içmage
       <a
         href="https://github.com/rosslh/foldA-Box-Office-System/upload/master/client/static/events">
         here
@@ -190,7 +190,9 @@
     </p>
   </div>
   <div class="inputField">
-    <h3>Embedded media (e.g. YouTube video)</h3>
+    <h3>Embedded media (e.g. YouTube video). For YouTube Video's, please enter as:</h3>
+    <h3>"https://youtube.com/embed/[Video ID Here]"</h3>
+    <h3>The Video ID can be found in the link, right after "watch?v="</h3>
     <input bind:value={embedMedia} />
   </div>
   <div class="inputField">
