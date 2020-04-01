@@ -52,31 +52,33 @@
     );
 
   $: addToCart = () => {
-    Object.keys(ticketSelection).forEach(ticketClassId => {
-      fetch(
-        `https://folda-box-office-system.herokuapp.com/users/${$userId}/cart/`,
-        {
-          mode: "cors",
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${$jwt}`
-          },
-          body: JSON.stringify({
-            purchasableId: purchasable.id,
-            ticketClassId: Number(ticketClassId),
-            quantity: ticketSelection[ticketClassId],
-            events: selectedEventIds
-          })
-        }
-      ).then(r => {
-        if (r.ok) {
-          goto(`/Cart`);
-        } else {
-          alert("Something went wrong. Please try again in a moment.");
-        }
+    Object.keys(ticketSelection)
+      .filter(ticketSelection[ticketClassId] > 0)
+      .forEach(ticketClassId => {
+        fetch(
+          `https://folda-box-office-system.herokuapp.com/users/${$userId}/cart/`,
+          {
+            mode: "cors",
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${$jwt}`
+            },
+            body: JSON.stringify({
+              purchasableId: purchasable.id,
+              ticketClassId: Number(ticketClassId),
+              quantity: ticketSelection[ticketClassId],
+              events: selectedEventIds
+            })
+          }
+        ).then(r => {
+          if (r.ok) {
+            goto(`/Cart`);
+          } else {
+            alert("Something went wrong. Please try again in a moment.");
+          }
+        });
       });
-    });
   };
 
   $: deletePass = async () => {
@@ -246,15 +248,15 @@
           <div class="artistName">{event.artistName}</div>
           {#if event.embedMedia}
             <div class="video">
-              <iframe 
+              <iframe
                 title="video"
-                width="280" 
-                height="157.5" 
+                width="280"
+                height="157.5"
                 src={event.embedMedia}
-                frameborder="0" 
-                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen>
-              </iframe>
+                frameborder="0"
+                allow="accelerometer; autoplay; encrypted-media; gyroscope;
+                picture-in-picture"
+                allowfullscreen />
             </div>
           {/if}
         </div>
