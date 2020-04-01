@@ -41,9 +41,9 @@
     }
   };
 
-  onMount(refreshCart);
-
-  setTimeout(refreshCart, 3000);
+  if (typeof window !== "undefined") {
+    setTimeout(refreshCart, 3000);
+  }
 
   const groupTicketsByClass = tickets => {
     const dict = {};

@@ -179,15 +179,15 @@
     </div>
     {#if event.embedMedia}
       <div class="video">
-        <iframe 
+        <iframe
           title="video"
-          width="280" 
-          height="157.5" 
+          width="280"
+          height="157.5"
           src={event.embedMedia}
-          frameborder="0" 
-          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
-          allowfullscreen>
-        </iframe>
+          frameborder="0"
+          allow="accelerometer; autoplay; encrypted-media; gyroscope;
+          picture-in-picture"
+          allowfullscreen />
       </div>
     {/if}
   </div>

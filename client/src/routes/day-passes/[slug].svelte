@@ -53,7 +53,7 @@
 
   $: addToCart = () => {
     Object.keys(ticketSelection)
-      .filter(ticketSelection[ticketClassId] > 0)
+      .filter(ticketClassId => ticketSelection[ticketClassId] > 0)
       .forEach(ticketClassId => {
         fetch(
           `https://folda-box-office-system.herokuapp.com/users/${$userId}/cart/`,
