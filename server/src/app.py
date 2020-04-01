@@ -743,7 +743,7 @@ def checkout():
         tickets = db.session.query(Ticket).join(TicketClass, TicketClass.id == Ticket.ticketClass_id).join(Event_Ticket, Ticket.id == Event_Ticket.ticket_id).filter(Ticket.user_id == identity['id']).all()
 
         msg = Message('Confirming Purchase', recipients=[identity['emailAddress']])
-        msg.body = 'Congratulations you have purchased the following tickets: ' + "\n".join(["{}{}".format(ticket.ticketClass.price, ', '.join([e.event.name for e in ticket.events])) for ticket in tickets])
+        msg.body = 'Congratulations, you have purchased the following tickets:\n' + "\n".join(["{} - {} - {}".format(ticket.ticketClass.price, ticket.ticketClass.description, ', '.join([e.event.name for e in ticket.events])) for ticket in tickets])
         mail.send(msg)
         
         for ticket in tickets:
