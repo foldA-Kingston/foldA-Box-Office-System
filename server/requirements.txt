@@ -10,3 +10,4 @@ squareup==5.0.0.20200226
 crypto==1.4.1
 gunicorn==20.0.4
 python-dotenv==0.12.0
+Flask-Mail==0.9.1

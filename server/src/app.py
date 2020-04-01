@@ -735,23 +735,23 @@ def checkout():
             "buyer_email_address": identity['emailAddress'],
             "statement_description_identifier": description
         }
-        try:
-            r = square.payments.create_payment(body)
-                
-        
-            #return 'Message has been sent!'
-            tickets = db.session.query(Ticket).join(TicketClass, TicketClass.id == Ticket.ticketClass_id).join(Event_Ticket, Ticket.id == Event_Ticket.ticket_id).filter(Ticket.user_id == identity['id']).all()
-
-            msg = Message('Confirming Purchase', recipients=[identity['emailAddress']])
-            msg.body = 'Congratulations you have purchased the following tickets: ' + "\n".join("{}{}".format(ticket.ticketClass.price, ticket.event.name))
-            mail.send(msg)
+        # try:
+        r = square.payments.create_payment(body)
             
-            for ticket in tickets:
-                ticket.isPurchased = True
-            db.session.commit()
-            return r.text
-        except Exception as e:
-            return e, 500
+    
+        #return 'Message has been sent!'
+        tickets = db.session.query(Ticket).join(TicketClass, TicketClass.id == Ticket.ticketClass_id).join(Event_Ticket, Ticket.id == Event_Ticket.ticket_id).filter(Ticket.user_id == identity['id']).all()
+
+        msg = Message('Confirming Purchase', recipients=[identity['emailAddress']])
+        msg.body = 'Congratulations you have purchased the following tickets: ' + "\n".join(["{}{}".format(ticket.ticketClass.price, ', '.join([e.event.name for e in ticket.events])) for ticket in tickets])
+        mail.send(msg)
+        
+        for ticket in tickets:
+            ticket.isPurchased = True
+        db.session.commit()
+        return r.text
+        # except Exception as e:
+        #     return e, 500
 
     return "Error", 400
 
