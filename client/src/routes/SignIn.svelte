@@ -24,11 +24,10 @@
 
     jwt.set(data.access_token);
     emailAddress.set(data.emailAddress);
-    isAdmin.set(data.isAdmin);
+    isAdmin.set(data.isAdmin ? "yes" : "no");
     userId.set(data.userId);
 
     goto("/");
-    // TODO: set more info here, like user's name and email
   };
 </script>
 

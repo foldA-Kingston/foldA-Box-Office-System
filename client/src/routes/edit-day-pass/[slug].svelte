@@ -255,6 +255,14 @@
       <div class="inputField">
         <h3>Image name</h3>
         <input bind:value={eventInput.imageUrl} />
+        <p>
+          Upload image
+          <a
+            href="https://github.com/rosslh/foldA-Box-Office-System/upload/master/client/static/events">
+            here
+          </a>
+          .
+        </p>
       </div>
       <div class="inputField">
         <h3>Embedded media (e.g. YouTube video)</h3>

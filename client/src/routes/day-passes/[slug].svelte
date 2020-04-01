@@ -192,7 +192,7 @@
   <title>Cart</title>
 </svelte:head>
 <h1 class="heading">{purchasable.name}</h1>
-{#if isAdmin}
+{#if $isAdmin == 'yes'}
   <a class="button" href={`/edit-day-pass/${purchasable.id}`}>Edit day pass</a>
   <button class="deleteDayPass" on:click={deletePass}>Delete day pass</button>
 {/if}

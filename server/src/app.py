@@ -10,21 +10,28 @@ import enum
 import bcrypt
 from flask_cors import CORS
 from square.client import Client
-from os import urandom
+from os import urandom, environ
 from base64 import b64encode
 from math import ceil
+from dotenv import load_dotenv
+
+load_dotenv()
+SQUARE_TOKEN = environ['SQUARE_TOKEN']
+SQUARE_ENVIRONMENT = environ['SQUARE_ENVIRONMENT']
+DEBUG_ENABLED = environ['DEBUG_ENABLED']
+JWT_SECRET_KEY = environ['JWT_SECRET_KEY']
+SQLALCHEMY_DATABASE_URI = environ['SQLALCHEMY_DATABASE_URI']
 
 square = Client(
-    access_token='EAAAEDptou3ubWRO3GTh2JflqNQDJhCUBZzkfAUCk_C1tqMD3X8EBH92jatDxUb1',
-    environment="sandbox")
+    access_token=SQUARE_TOKEN,
+    environment=SQUARE_ENVIRONMENT)
 
 app = Flask(__name__)
 
-app.config['DEBUG'] = True
-# TODO: Put this in a env variable
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://rqkxpfbo:Rpk8w646Zf5pIide1L9KP-_p4ElwNFsw@rajje.db.elephantsql.com:5432/rqkxpfbo'
+app.config['DEBUG'] = DEBUG_ENABLED == "yes"
+app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 
-app.config['JWT_SECRET_KEY'] = 'super-secret'  # TODO: Change this
+app.config['JWT_SECRET_KEY'] = JWT_SECRET_KEY
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False
 
 CORS(app)
@@ -435,20 +442,6 @@ def updateEvent(id):
         db.session.commit()
         return serialize(event)
     return "Forbidden", 403
-
-
-# Delete one event
-# @app.route("/events/<id>/", methods=['DELETE'])
-# @jwt_required
-# def deleteEvent(id):
-#     identity = get_jwt_identity()
-#     id = int(id)
-#     if identity['isAdmin']:
-#         event = db.session.query(Event).filter(Event.id == id).delete()
-#         db.session.commit()
-#         return "Deleted event {}".format(id)
-#     return "Forbidden", 403
-
 
 # Create new purchasable
 @app.route("/purchasables/", methods=['POST'])

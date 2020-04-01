@@ -36,7 +36,7 @@
   <title>Events</title>
 </svelte:head>
 <h1 class="heading">Events</h1>
-{#if $isAdmin}
+{#if $isAdmin == 'yes'}
   <div>
     <a class="button" href="NewIndividualEvent">New single event</a>
     <a class="button" href="NewDayPass">New day pass</a>
